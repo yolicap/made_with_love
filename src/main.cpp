@@ -3,6 +3,8 @@
 #define OLC_PGE3_APPLICATION
 
 #include "game.h"
+#include "puzzle.h"
+#include "debug_puzzle.h"
 #include "game_window.h"
 
 #include <numbers>
@@ -15,10 +17,40 @@ float rand_int(int min, int max) {
     return min + rand() % (max - min + 1);
 }
 
+// class PackingPuzzle : public Puzzle {
+// private:
+// 	bool complete;
+
+// public:
+// 	PackingPuzzle(GameWindow* pw) {
+// 		puzzleWindow = pw;
+// 		complete = false;
+// 	}
+
+//     void Draw(olc::Draw& draw) override {
+// 		puzzleWindow->Draw(draw);
+// 	}
+
+// 	void Update() override {
+// 		checkComplete();
+// 	}
+
+// 	bool isComplete() override {
+// 		return false;
+// 	}
+
+// private:
+// 	void checkComplete() override {
+// 		complete = false;
+// 	}
+// };
+
+
 class MadeWithLove : public olc::PixelGameEngine {
 
 protected:
-    std::vector<GameWindow> gameWindows;
+    std::vector<Puzzle*> puzzles;
+
 	olc::Image windowTopCornerImage;
 	olc::Image windowBottomCornerImage;
 	olc::Image windowTopEdgeImage;
@@ -37,17 +69,19 @@ public:
 		CreateImageFromFile(windowEdgeImage, "./assets/Window_Edge_Side+Bottom.png");
 		CreateImageFromFile(windowButtonUp, "./assets/Close_Button_Up.png");
 
-		olc::vf2d pos {100.0, 100.0};
-        gameWindows.emplace_back(GameWindow(
-			pos, 
-			200, 
-			100, 
-			&windowTopCornerImage, 
-			&windowBottomCornerImage,
-			&windowTopEdgeImage,
-			&windowEdgeImage,
-			&windowButtonUp
-		));
+		// olc::vf2d pos {100.0, 100.0};
+        // gameWindows.emplace_back(GameWindow(
+		// 	pos, 
+		// 	200, 
+		// 	100, 
+		// 	&windowTopCornerImage, 
+		// 	&windowBottomCornerImage,
+		// 	&windowTopEdgeImage,
+		// 	&windowEdgeImage,
+		// 	&windowButtonUp
+		// ));
+
+		puzzles.emplace_back(new DebugPuzzle());
 
 		return true;
 	}
@@ -58,11 +92,14 @@ public:
 	{
 
 		// Clear screen to a background color
-		draw.Clear(olc::Colour::BLACK);
 
         // Draw windows
-        for(int i = 0; i < gameWindows.size(); i++) {
-            gameWindows[i].Draw(draw);
+        // for(int i = 0; i < gameWindows.size(); i++) {
+        //     gameWindows[i].Draw(draw);
+        // }
+
+		for(int i = 0; i < puzzles.size(); i++) {
+            puzzles[i]->Draw(draw, fElapsedTime);
         }
 
 		return true;
