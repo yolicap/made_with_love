@@ -3,9 +3,14 @@
 #define OLC_PGE3_APPLICATION
 
 #include "game.h"
+#include "puzzle.h"
+#include "debug_puzzle.h"
 #include "game_window.h"
+#include "puzzle_window.h"
 
 #include <numbers>
+
+GAME_PARAMETERS GameParameters;
 
 float rand_float(float min, float max) {
     return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(max - min)));
@@ -15,21 +20,88 @@ float rand_int(int min, int max) {
     return min + rand() % (max - min + 1);
 }
 
+// class PackingPuzzle : public Puzzle {
+// private:
+// 	bool complete;
+
+// public:
+// 	PackingPuzzle(GameWindow* pw) {
+// 		puzzleWindow = pw;
+// 		complete = false;
+// 	}
+
+//     void Draw(olc::Draw& draw) override {
+// 		puzzleWindow->Draw(draw);
+// 	}
+
+// 	void Update() override {
+// 		checkComplete();
+// 	}
+
+// 	bool isComplete() override {
+// 		return false;
+// 	}
+
+// private:
+// 	void checkComplete() override {
+// 		complete = false;
+// 	}
+// };
+
+// class PuzzleWindow : public GameWindow {
+// 	private:
+// 	// TODO: when window is closed, pointers should be freed
+// 	Puzzle* puzzle;
+// 	// const olc::vf2d shape {325, 125};
+
+// 	public:
+// 	PuzzleWindow(        
+// 		olc::vf2d p, 
+//         float w, 
+//         float h, 
+//         olc::Image* wtc, 
+//         olc::Image* wbc, 
+//         olc::Image* wte, 
+//         olc::Image* we, 
+//         olc::Image* wbu,
+// 		olc::Image* wc,
+// 		Puzzle* pzl
+// 	) : GameWindow(p, w, h, wtc, wbc, wte, we, wbu, wc) {
+// 		puzzle = pzl;
+// 	}
+
+// 	void Draw(olc::Draw& draw, float fElapsedTime) {
+// 		GameWindow::Draw(draw);
+// 		// Draw window target
+// 		draw.SetTarget(*windowContent);
+// 		puzzle->Draw(draw, fElapsedTime);
+// 		draw.SetTarget(*(GameParameters.screen));
+// 	}
+
+// };
+
+
 class MadeWithLove : public olc::PixelGameEngine {
 
 protected:
-    std::vector<GameWindow> gameWindows;
+    // std::vector<Puzzle*> puzzles;
+	std::vector<PuzzleWindow> puzzleWindows;
+
 	olc::Image windowTopCornerImage;
 	olc::Image windowBottomCornerImage;
 	olc::Image windowTopEdgeImage;
 	olc::Image windowEdgeImage;
 	olc::Image windowButtonUp;
 
+	olc::Image puzzleContent; // TODO: malloc this instead
+	DebugPuzzle dbgPuzzle1;
+
 public:
 
 	// Called once when the game starts
 	bool OnUserCreate() override
 	{
+		GameParameters.screen = &GetScreen();
 
 		CreateImageFromFile(windowTopCornerImage, "./assets/Window_Corner_Top.png");
 		CreateImageFromFile(windowBottomCornerImage, "./assets/Window_Corner_Bottom.png");
@@ -38,31 +110,37 @@ public:
 		CreateImageFromFile(windowButtonUp, "./assets/Close_Button_Up.png");
 
 		olc::vf2d pos {100.0, 100.0};
-        gameWindows.emplace_back(GameWindow(
+
+		// TODO: debug puzzle shapes should be set in globals
+		CreateImage(puzzleContent, { 325, 125 });
+		dbgPuzzle1 = DebugPuzzle();
+
+		puzzleWindows.emplace_back(PuzzleWindow(
 			pos, 
-			200, 
-			100, 
+			325, 
+			125, 
 			&windowTopCornerImage, 
 			&windowBottomCornerImage,
 			&windowTopEdgeImage,
 			&windowEdgeImage,
-			&windowButtonUp
+			&windowButtonUp,
+			&puzzleContent,
+			&dbgPuzzle1
 		));
 
 		return true;
 	}
 
-
 	// Called every frame
 	bool OnUserUpdate(float fElapsedTime) override
 	{
+		GameParameters.screen = &GetScreen();
 
 		// Clear screen to a background color
 		draw.Clear(olc::Colour::BLACK);
 
-        // Draw windows
-        for(int i = 0; i < gameWindows.size(); i++) {
-            gameWindows[i].Draw(draw);
+		for(int i = 0; i < puzzleWindows.size(); i++) {
+            puzzleWindows[i].Draw(draw, fElapsedTime);
         }
 
 		return true;

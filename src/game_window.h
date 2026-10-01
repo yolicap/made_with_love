@@ -18,6 +18,9 @@ class GameWindow {
 	olc::Image* windowButtonUp;
 
     public:
+    // TODO: when window is closed, THIS pointer should be freed
+    olc::Image* windowContent;
+
     GameWindow(
         olc::vf2d p, 
         float w, 
@@ -26,7 +29,8 @@ class GameWindow {
         olc::Image* wbc, 
         olc::Image* wte, 
         olc::Image* we, 
-        olc::Image* wbu
+        olc::Image* wbu,
+        olc::Image* wc
     );
     void Draw(olc::Draw& draw);
 

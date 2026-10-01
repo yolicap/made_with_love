@@ -10,7 +10,7 @@
 #include "game_window.h"
 #include <numbers>
 
-GameWindow::GameWindow(olc::vf2d p, float w, float h, olc::Image* wtc, olc::Image* wbc, olc::Image* wte, olc::Image* we, olc::Image* wbu) {
+GameWindow::GameWindow(olc::vf2d p, float w, float h, olc::Image* wtc, olc::Image* wbc, olc::Image* wte, olc::Image* we, olc::Image* wbu, olc::Image* wc) {
     position = p;
     width = w;
     height = h;
@@ -19,6 +19,7 @@ GameWindow::GameWindow(olc::vf2d p, float w, float h, olc::Image* wtc, olc::Imag
     windowTopEdge = wte;
     windowEdge = we;
     windowButtonUp = wbu;
+    windowContent = wc;
 }
 
 void GameWindow::Draw(olc::Draw& draw) {
@@ -31,17 +32,18 @@ void GameWindow::Draw(olc::Draw& draw) {
     y2 = position.y + height;
 
     // Draw background
-    draw.FilledRect(
-        {x1+windowTopCorner->Size().x, y1+windowTopCorner->Size().y}, 
-        {width-windowTopCorner->Size().x, height-windowTopCorner->Size().y}, 
-        olc::Pixel(0xe3, 0xf5, 0xf1)
-    );
+    draw.Image(windowContent->region({0,0}, {width, height-windowTopCorner->Size().y}), {x1+windowTopCorner->Size().x, y1+windowTopCorner->Size().y});
 
     DrawEdges(draw, x1, y1, x2, y2);
     DrawCorners(draw, x1, y1, x2, y2);
 
     // Draw button
     draw.Image(*windowButtonUp, {x2-windowButtonUp->Size().x+windowTopCorner->Size().x, y1});
+    
+    // Set background
+    draw.SetTarget(*windowContent);
+    draw.Clear(olc::Pixel(0xe3, 0xf5, 0xf1));
+    draw.SetTarget(*(GameParameters.screen));
 }
 
 void GameWindow::DrawEdges(olc::Draw& draw, float x1, float y1, float x2, float y2) {
