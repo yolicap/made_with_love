@@ -18,16 +18,34 @@ DebugPuzzle::DebugPuzzle() {
 void DebugPuzzle::Draw(olc::Draw& draw, float fElapsedTime) {
     // draw.SetTarget(region);
 
-    // Clear whole screen
-    draw.Clear(olc::Colour::BLACK);
-
     // Determine how many characters fit on the screen
     // olc::vf2d vSizeOfChar = draw.GetTextSize("A");
     // olc::vf2d nVisibleChars = shape.x / vSizeOfChar;
 
-    draw.StringProp({ 10, 60 }, std::format("[{:#04x}]:{:#08x}--------------------[stack]", 0x0000, 0x00000000) ,  olc::Pixel(0, 0, 100));
+    draw.StringProp(
+        { 10, 10 }, 
+        std::format(
+            "[{:#04x}]:{:#08x}--------------------[stack]",
+            0x0000, 
+            0x00000000
+        ), 
+        olc::Pixel(0x3f, 0xa0, 0xa4) 
+    );
+
     for (float i = 0; i < 8; i++) {
-        draw.StringProp({ 10, 70 + (10 * i) }, std::format("{:#08x} : {:#02x} {:#02x} {:#02x} {:#02x} {}", 0x00000000, 0x00, 0x00, 0x00, 0x00, ". . . . . . . . . . . . . . . .") ,  olc::Pixel(0, 0, 100));
+        draw.StringProp(
+            { 10, 20 + (10 * i) }, 
+            std::format(
+                "{:#08x} : {:#02x} {:#02x} {:#02x} {:#02x} {}", 
+                0x00000000, 
+                0x00, 
+                0x00, 
+                0x00, 
+                0x00, 
+                ". . . . . . . . . . . . . . . ."
+            ),  
+            olc::Pixel(0x81, 0xaf, 0xb5) // #81afb5
+        );
     }
 
 }
