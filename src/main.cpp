@@ -148,6 +148,15 @@ public:
 	bool OnUserUpdate(float fElapsedTime) override
 	{
 		GameParameters.screen = &GetScreen();
+		GameParameters.leftClickPressed = mouse.GetButton(0).bPressed;
+		GameParameters.leftClickHeld = mouse.GetButton(0).bHeld;
+		GameParameters.leftClickReleased = mouse.GetButton(0).bReleased;
+
+		GameParameters.mousePosition = mouse.GetPosition();
+
+		for(int i = 0; i < puzzleWindows.size(); i++) {
+            puzzleWindows[i].Update();
+        }
 
 		//Update the game controller, which will update the current state
 		gameController.Update(fElapsedTime);

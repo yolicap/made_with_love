@@ -6,6 +6,10 @@
 typedef struct
 {
     olc::Image* screen;
+    olc::vf2d mousePosition;
+    bool leftClickPressed;
+    bool leftClickHeld;
+    bool leftClickReleased;
 
 } GAME_PARAMETERS;
 

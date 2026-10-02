@@ -17,6 +17,9 @@ class GameWindow {
 	olc::Image* windowEdge;
 	olc::Image* windowButtonUp;
 
+    bool held;
+    olc::vf2d heldOffsetPosition;
+
     public:
     // TODO: when window is closed, THIS pointer should be freed
     olc::Image* windowContent;
@@ -33,10 +36,12 @@ class GameWindow {
         olc::Image* wc
     );
     void Draw(olc::Draw& draw);
+    void Update();
 
 	private:
 	void DrawEdges(olc::Draw& draw, float x1, float y1, float x2, float y2);
 	void DrawCorners(olc::Draw& draw, float x1, float y1, float x2, float y2);
+    bool onHandle(olc::vf2d point);
 
 };
 
