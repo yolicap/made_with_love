@@ -113,8 +113,9 @@ public:
 
 	void DrawTimer() {
 		char clockStr[6];
-		int minsRemaining = fGameplayTimeRemaining / 60;
+		int minsRemaining = (fGameplayTimeRemaining + 1) / 60;
 		int secsRemaining = (fGameplayTimeRemaining - minsRemaining * 60) + 1;
+		secsRemaining = secsRemaining == 60 ? 0 : secsRemaining;
 		snprintf(clockStr, sizeof(clockStr), "%.2d:%.2d", minsRemaining, secsRemaining);
 		olc::vf2d timerPos = {518, 342};
 		const olc::vf2d normalScale = { 1.5f, 1.5f };
