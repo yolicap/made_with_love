@@ -5,8 +5,6 @@
 #define GAME_WINDOW_H
 
 class GameWindow {
-	// this is a vector btw
-    olc::vf2d position; 
 
 	float width;
 	float height;
@@ -16,6 +14,12 @@ class GameWindow {
 	olc::Image* windowTopEdge;
 	olc::Image* windowEdge;
 	olc::Image* windowButtonUp;
+
+    bool held;
+    olc::vf2d heldOffsetPosition;
+
+    protected:
+    olc::vf2d position; 
 
     public:
     // TODO: when window is closed, THIS pointer should be freed
@@ -33,10 +37,12 @@ class GameWindow {
         olc::Image* wc
     );
     void Draw(olc::Draw& draw);
+    void Update();
 
 	private:
 	void DrawEdges(olc::Draw& draw, float x1, float y1, float x2, float y2);
 	void DrawCorners(olc::Draw& draw, float x1, float y1, float x2, float y2);
+    bool onHandle(olc::vf2d point);
 
 };
 

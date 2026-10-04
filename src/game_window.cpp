@@ -20,6 +20,8 @@ GameWindow::GameWindow(olc::vf2d p, float w, float h, olc::Image* wtc, olc::Imag
     windowEdge = we;
     windowButtonUp = wbu;
     windowContent = wc;
+    held = false;
+    olc::vf2d heldOffsetPosition = {0,0};
 }
 
 void GameWindow::Draw(olc::Draw& draw) {
@@ -97,4 +99,30 @@ void GameWindow::DrawCorners(olc::Draw& draw, float x1, float y1, float x2, floa
     draw.Image(batch, *windowBottomCorner, {x1, y2});
     draw.Image(batch, (*windowBottomCorner).flipH(), {x2, y2});
     draw.Batch(batch);
+}
+
+bool GameWindow::onHandle(olc::vf2d point) {
+    return position.x < point.x 
+        && point.x < position.x + width 
+        && point.y > position.y 
+        && point.y < position.y + windowTopEdge->Size().y;
+}
+
+void GameWindow::Update() {
+    // If clicked on top, set held
+    if (GameParameters.leftClickPressed && onHandle(GameParameters.mousePosition)) {
+        held = true;
+        // Set offset position
+        heldOffsetPosition = GameParameters.mousePosition - position;
+    }
+
+    // If mouse is held, continue and drag
+    if (held && GameParameters.leftClickHeld) {
+        // Update position
+        position = GameParameters.mousePosition - heldOffsetPosition;
+    }
+    // Otherwise, remove held
+    if (held && GameParameters.leftClickReleased) {
+        held = false;
+    }
 }

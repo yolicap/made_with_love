@@ -21,67 +21,6 @@ float rand_int(int min, int max) {
 	return min + rand() % (max - min + 1);
 }
 
-// class PackingPuzzle : public Puzzle {
-// private:
-// 	bool complete;
-
-// public:
-// 	PackingPuzzle(GameWindow* pw) {
-// 		puzzleWindow = pw;
-// 		complete = false;
-// 	}
-
-//     void Draw(olc::Draw& draw) override {
-// 		puzzleWindow->Draw(draw);
-// 	}
-
-// 	void Update() override {
-// 		checkComplete();
-// 	}
-
-// 	bool isComplete() override {
-// 		return false;
-// 	}
-
-// private:
-// 	void checkComplete() override {
-// 		complete = false;
-// 	}
-// };
-
-// class PuzzleWindow : public GameWindow {
-// 	private:
-// 	// TODO: when window is closed, pointers should be freed
-// 	Puzzle* puzzle;
-// 	// const olc::vf2d shape {325, 125};
-
-// 	public:
-// 	PuzzleWindow(        
-// 		olc::vf2d p, 
-//         float w, 
-//         float h, 
-//         olc::Image* wtc, 
-//         olc::Image* wbc, 
-//         olc::Image* wte, 
-//         olc::Image* we, 
-//         olc::Image* wbu,
-// 		olc::Image* wc,
-// 		Puzzle* pzl
-// 	) : GameWindow(p, w, h, wtc, wbc, wte, we, wbu, wc) {
-// 		puzzle = pzl;
-// 	}
-
-// 	void Draw(olc::Draw& draw, float fElapsedTime) {
-// 		GameWindow::Draw(draw);
-// 		// Draw window target
-// 		draw.SetTarget(*windowContent);
-// 		puzzle->Draw(draw, fElapsedTime);
-// 		draw.SetTarget(*(GameParameters.screen));
-// 	}
-
-// };
-
-
 class MadeWithLove : public olc::PixelGameEngine {
 
 protected:
@@ -93,6 +32,10 @@ protected:
 	olc::Image windowTopEdgeImage;
 	olc::Image windowEdgeImage;
 	olc::Image windowButtonUp;
+
+	olc::Image cursor;
+	olc::Image cursorGrab;
+	olc::Image cursorGrabbing;
 
 	olc::Image puzzleContent; // TODO: malloc this instead
 	DebugPuzzle dbgPuzzle1;
@@ -119,17 +62,21 @@ public:
 		CreateImageFromFile(windowEdgeImage, "./assets/Window_Edge_Side+Bottom.png");
 		CreateImageFromFile(windowButtonUp, "./assets/Close_Button_Up.png");
 
-		olc::vf2d pos{ 100.0, 100.0 };
+		CreateImageFromFile(cursor, "./assets/Cursor/Cursor_Default.png");
+		CreateImageFromFile(cursorGrab, "./assets/Cursor/Cursor_Grab.png");
+		CreateImageFromFile(cursorGrabbing, "./assets/Cursor/Cursor_Grabbing.png");
+
+		olc::vf2d pos {100.0, 100.0};
 
 		// TODO: debug puzzle shapes should be set in globals
 		CreateImage(puzzleContent, { 325, 125 });
 		dbgPuzzle1 = DebugPuzzle();
 
 		puzzleWindows.emplace_back(PuzzleWindow(
-			pos,
-			325,
-			125,
-			&windowTopCornerImage,
+			pos, 
+			220, 
+			120, 
+			&windowTopCornerImage, 
 			&windowBottomCornerImage,
 			&windowTopEdgeImage,
 			&windowEdgeImage,
@@ -139,6 +86,7 @@ public:
 		));
 
 		gameController.Start();
+		// ShowMouseCursor(false);
 
 		return true;
 	}
@@ -148,6 +96,15 @@ public:
 	bool OnUserUpdate(float fElapsedTime) override
 	{
 		GameParameters.screen = &GetScreen();
+		GameParameters.leftClickPressed = mouse.GetButton(0).bPressed;
+		GameParameters.leftClickHeld = mouse.GetButton(0).bHeld;
+		GameParameters.leftClickReleased = mouse.GetButton(0).bReleased;
+
+		GameParameters.mousePosition = mouse.GetPosition();
+
+		for(int i = 0; i < puzzleWindows.size(); i++) {
+            puzzleWindows[i].Update(fElapsedTime);
+        }
 
 		//Update the game controller, which will update the current state
 		gameController.Update(fElapsedTime);
@@ -163,6 +120,13 @@ public:
 		else {
 			gameController.Draw();
 		}
+
+		// TODO : this needs to be in its own class with isHovering methods and all that
+		// just for demo.. it stays here
+		// if(GameParameters.leftClickHeld)
+		// 	draw.Image(cursorGrabbing, GameParameters.mousePosition);
+		// else
+		// 	draw.Image(cursorGrab, GameParameters.mousePosition);
 
 		return true;
 	}
