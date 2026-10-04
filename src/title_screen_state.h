@@ -44,7 +44,7 @@ private:
 	};
 
 	std::vector<std::string> credits = {
-		"Put ur User",
+		"AlfaDrottning",
 		"JustBrailey",
 		"Put ur User",
 		"Put ur User"
