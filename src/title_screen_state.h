@@ -9,7 +9,7 @@
 
 class TitleScreenState : public GameState {
 public:
-	TitleScreenState(olc::PixelGameEngine& game, std::function<void()> onQuit);
+	TitleScreenState(olc::PixelGameEngine& game, olc::Image& titleCard, std::function<void()> onQuit);
 
 	void OnEnter() override;
 
@@ -35,6 +35,7 @@ private:
 	void DrawHeart(const olc::vf2d& position);
 
 private:
+	olc::Image& titleCard;
 	std::function<void()> onQuit;
 
 	std::vector<std::string> menuOptions = {

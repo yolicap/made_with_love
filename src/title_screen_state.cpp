@@ -1,7 +1,7 @@
 #include "title_screen_state.h"
 
-TitleScreenState::TitleScreenState(olc::PixelGameEngine& game, std::function<void()> onQuit) 
-	: GameState(game), onQuit(onQuit) {
+TitleScreenState::TitleScreenState(olc::PixelGameEngine& game, olc::Image& titleCard, std::function<void()> onQuit)
+	: GameState(game), titleCard(titleCard), onQuit(onQuit) {
 }
 
 void TitleScreenState::OnEnter() {
@@ -67,17 +67,13 @@ void TitleScreenState::Draw() {
 void TitleScreenState::DrawMainMenu() {
 	olc::Draw& draw = game.GetDraw();
 
-	const std::string title = "MADE WITH LOVE";
-	const olc::vf2d titleScale = { 3.0f, 3.0f };
+	const olc::vf2d titleScale = { 2.5f, 2.5f };
 
-	auto titleSize = draw.GetTextSize(title, true, titleScale);
+	float titleX = (static_cast<float>(game.ScreenSize().x) - static_cast<float>(titleCard.Size().x) * titleScale.x) / 2.0f;
 
-	float titleX = (static_cast<float>(game.ScreenSize().x) - static_cast<float>(titleSize.x)) / 2.0f;
-
-	draw.StringProp(
-		{ titleX, 80.0f },
-		title,
-		GAME_TEXT_COLOR,
+	draw.Image(
+		titleCard,
+		{ titleX, 60.0f },
 		titleScale
 	);
 

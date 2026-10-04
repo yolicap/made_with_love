@@ -4,7 +4,7 @@
 #include "gameplay_state.h"
 #include "game_over_state.h"
 
-GameController::GameController(olc::PixelGameEngine& game) : game(game) {}
+GameController::GameController(olc::PixelGameEngine& game, olc::Image& titleCard) : game(game), titleCard(titleCard) {}
 
 void GameController::Start() {
 	ChangeState(GameStateID::TitleScreen);
@@ -54,6 +54,7 @@ void GameController::ChangeState(GameStateID newState) {
 	case GameStateID::TitleScreen:
 		activeState = std::make_unique<TitleScreenState>(
 			game,
+			titleCard,
 			[this]() {
 				quitRequested = true;
 			}

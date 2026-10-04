@@ -6,13 +6,16 @@
 #include "puzzle.h"
 
 #include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 typedef std::pair<int, int> BugPosition;
 typedef std::map<BugPosition, int> BugMap;
 
 class DebugPuzzle : public Puzzle {
 private:
-	static const olc::vf2d shape; 
+	static const olc::vf2d shape;
 	static olc::vf2d bugMatrixOffset;
 	std::string sBackgroundRandomText;
 
@@ -25,16 +28,19 @@ private:
 
 	char* bugMatrix;
 
+	float bugCharacterWidth = 8.0f;
+
 public:
 	DebugPuzzle();
-    void Draw(olc::Draw& draw, float fElapsedTime) override;
-	void Update(float fElapsedTime) override;
+
+	void Draw(olc::Draw& draw, float fElapsedTime) override;
+	void Update(float fElapsedTime, const PuzzleInput& input) override;
 	bool isComplete() override;
 
 private:
 	void checkComplete() override;
 	std::vector<std::pair<int, int>> getPossibleBugMovement(std::pair<int, int> currPos);
-	bool onBug(olc::vf2d point, BugPosition bugPosition);
+	bool onBug(const olc::vf2d& point, BugPosition bugPosition) const;
 };
 
 #endif
