@@ -10,7 +10,7 @@ PuzzleWindow::PuzzleWindow(
 	olc::vf2d p,
 	float w,
 	float h,
-	const WindowAssets& assets,
+	WindowAssets& assets,
 	olc::vi2d contentSize,
 	std::unique_ptr<Puzzle> pzl
 ) : GameWindow(
@@ -24,7 +24,7 @@ PuzzleWindow::PuzzleWindow(
 puzzle(std::move(pzl)) {
 }
 
-void PuzzleWindow::Draw(olc::Draw& draw, float fElapsedTime) {
+void PuzzleWindow::Draw(olc::Draw& draw) {
 	if (!IsOpen()) return;
 
 	// Draw window target
@@ -34,7 +34,7 @@ void PuzzleWindow::Draw(olc::Draw& draw, float fElapsedTime) {
 
 	draw.Clear(backgroundColor);
 
-	puzzle->Draw(draw, fElapsedTime);
+	puzzle->Draw(draw);
 
 	draw.SetTarget(*(GameParameters.screen));
 

@@ -6,8 +6,9 @@
 
 GameController::GameController(olc::PixelGameEngine& game, olc::Image& titleCard) : game(game), titleCard(titleCard) {}
 
-void GameController::Start() {
+void GameController::Start(WindowAssets inWindowAssets) {
 	ChangeState(GameStateID::TitleScreen);
+	windowAssets = inWindowAssets;
 }
 
 bool GameController::Update(float fElapsedTime) {
@@ -33,6 +34,12 @@ void GameController::Draw() {
 	if (!activeState) return;
 
 	activeState->Draw();
+}
+
+void GameController::DrawOverlay() {
+	if (!activeState) return;
+
+	activeState->DrawOverlay();
 }
 
 
@@ -62,7 +69,7 @@ void GameController::ChangeState(GameStateID newState) {
 		break;
 
 	case GameStateID::Gameplay:
-		activeState = std::make_unique<GameplayState>(game);
+		activeState = std::make_unique<GameplayState>(game, windowAssets);
 		break;
 
 	case GameStateID::GameOver:

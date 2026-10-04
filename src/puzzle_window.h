@@ -18,12 +18,12 @@ public:
 		olc::vf2d p,
 		float w,
 		float h,
-		const WindowAssets& assets,
+		WindowAssets& assets,
 		olc::vi2d contentSize,
 		std::unique_ptr<Puzzle> pzl
 	);
 
-	void Draw(olc::Draw& draw, float fElapsedTime);
+	void Draw(olc::Draw& draw);
 	void Update(float fElapsedTime, bool active);
 };
 

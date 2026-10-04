@@ -10,7 +10,7 @@ public:
 	void AddWindow(std::unique_ptr<PuzzleWindow> window);
 
 	void Update(float fElapsedTime);
-	void Draw(olc::Draw& draw, float fElapsedTime);
+	void Draw(olc::Draw& draw);
 
 	void OpenAll();
 

@@ -64,13 +64,11 @@ void WindowManager::Update(float fElapsedTime) {
 }
 
 void WindowManager::Draw(
-	olc::Draw& draw,
-	float fElapsedTime
+	olc::Draw& draw
 ) {
 	for (auto& window : windows) {
 		window->Draw(
-			draw,
-			fElapsedTime
+			draw
 		);
 	}
 }

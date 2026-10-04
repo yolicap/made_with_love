@@ -24,12 +24,6 @@ float rand_int(int min, int max) {
 
 class MadeWithLove : public olc::PixelGameEngine {
 protected:
-	olc::Image windowTopCornerImage;
-	olc::Image windowBottomCornerImage;
-	olc::Image windowTopEdgeImage;
-	olc::Image windowEdgeImage;
-	olc::Image windowButtonUp;
-	olc::Image windowButtonDown;
 
 	olc::Image cursor;
 	olc::Image cursorGrab;
@@ -42,7 +36,6 @@ protected:
 
 
 private:
-	WindowManager windowManager;
 	GameController gameController;
 
 public:
@@ -54,17 +47,24 @@ public:
 	bool OnUserCreate() override {
 		GameParameters.screen = &GetScreen();
 
+		CreateImageFromFile(cursor, "./assets/Cursor/Cursor_Default.png");
+		CreateImageFromFile(cursorGrab, "./assets/Cursor/Cursor_Grab.png");
+		CreateImageFromFile(cursorGrabbing, "./assets/Cursor/Cursor_Grabbing.png");
+		CreateImageFromFile(monitorBorder, "./assets/Monitor_Border.png");
+		CreateImageFromFile(titleCard, "./assets/Title_card.png");
+
+		olc::Image windowTopCornerImage;
+		olc::Image windowBottomCornerImage;
+		olc::Image windowTopEdgeImage;
+		olc::Image windowEdgeImage;
+		olc::Image windowButtonUp;
+		olc::Image windowButtonDown;
 		CreateImageFromFile(windowTopCornerImage, "./assets/Window_Corner_Top.png");
 		CreateImageFromFile(windowBottomCornerImage, "./assets/Window_Corner_Bottom.png");
 		CreateImageFromFile(windowTopEdgeImage, "./assets/Window_Edge_Top.png");
 		CreateImageFromFile(windowEdgeImage, "./assets/Window_Edge_Side+Bottom.png");
 		CreateImageFromFile(windowButtonUp, "./assets/Close_Button_Up.png");
 		CreateImageFromFile(windowButtonDown, "./assets/Close_Button_Down.png");
-		CreateImageFromFile(cursor, "./assets/Cursor/Cursor_Default.png");
-		CreateImageFromFile(cursorGrab, "./assets/Cursor/Cursor_Grab.png");
-		CreateImageFromFile(cursorGrabbing, "./assets/Cursor/Cursor_Grabbing.png");
-		CreateImageFromFile(monitorBorder, "./assets/Monitor_Border.png");
-		CreateImageFromFile(titleCard, "./assets/Title_card.png");
 
 		WindowAssets windowAssets = {
 			&windowTopCornerImage,
@@ -75,52 +75,12 @@ public:
 			&windowButtonDown
 		};
 
-		// First debug puzzle window
-		windowManager.AddWindow(
-			std::make_unique<PuzzleWindow>(
-				*this,
-				olc::vf2d{ 100.0f, 90.0f },
-				220.0f,
-				120.0f,
-				windowAssets,
-				olc::vi2d{ 325, 125 },
-				std::make_unique<DebugPuzzle>()
-			)
-		);
-
-		// Second debug puzzle window.
-		// Uses a separate DebugPuzzle instance so the puzzles
-		// do not share state.
-		windowManager.AddWindow(
-			std::make_unique<PuzzleWindow>(
-				*this,
-				olc::vf2d{ 260.0f, 140.0f },
-				220.0f,
-				120.0f,
-				windowAssets,
-				olc::vi2d{ 325, 125 },
-				std::make_unique<DebugPuzzle>()
-			)
-		);
-
 		draw.SetTarget(GetScreen());
 
-		gameController.Start();
+		gameController.Start(windowAssets);
 		// ShowMouseCursor(false);
 
 		return true;
-	}
-
-	void DrawTimer() {
-		char clockStr[6];
-		int minsRemaining = fGameplayTimeRemaining / 60;
-		int secsRemaining = (fGameplayTimeRemaining - minsRemaining * 60) + 1;
-		snprintf(clockStr, sizeof(clockStr), "%.2d:%.2d", minsRemaining, secsRemaining);
-		olc::vf2d timerPos = {518, 342};
-		const olc::vf2d normalScale = { 1.5f, 1.5f };
-		draw.FilledRect({515,338},{57,20}, olc::Pixel(100,100,100), olc::Colour::DARK_GREY);
-		draw.StringProp(timerPos, clockStr, GAME_TEXT_COLOR, normalScale);
-		draw.SetTarget(GetScreen());
 	}
 
 
@@ -133,31 +93,13 @@ public:
 
 		GameParameters.mousePosition = mouse.GetPosition();
 
-		GameStateID prevState = gameController.GetCurrentState();
-
 		//Update the game controller, which will update the current state
 		if (!gameController.Update(fElapsedTime)) {
 			return false;
 		}
-		GameStateID currentState = gameController.GetCurrentState();
+
 		draw.SetTarget(GetScreen());
-
-		if (currentState == GameStateID::Gameplay) {
-
-			if (prevState != GameStateID::Gameplay) {
-				windowManager.OpenAll();
-				fGameplayTimeRemaining = GAME_TIME_LIMIT;
-			}
-
-			draw.Clear(GAME_BACKGROUND_COLOR);
-			windowManager.Update(fElapsedTime);
-			windowManager.Draw(draw, fElapsedTime);
-			fGameplayTimeRemaining -= fElapsedTime;
-		}
-		else {
-			draw.SetTarget(GetScreen());
-			gameController.Draw();
-		}
+		gameController.Draw();
 
 		// TODO : this needs to be in its own class with isHovering methods and all that
 		// just for demo.. it stays here
@@ -180,9 +122,7 @@ public:
 			borderScale
 		);
 
-		if (gameController.GetCurrentState() == GameStateID::Gameplay) {
-			DrawTimer();
-		}
+		gameController.DrawOverlay();
 
 		return true;
 	}

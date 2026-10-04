@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game_state.h"
+#include "game_window.h"
 #include <memory>
 
 class GameController {
@@ -9,12 +10,13 @@ public:
 	GameController(olc::PixelGameEngine& game, olc::Image& titleCard);
 
 	// starts the game
-	void Start();
+	void Start(WindowAssets windowAssets);
 
 	bool Update(float fElapsedTime);
 
 	// draw the currently active state
 	void Draw();
+	void DrawOverlay();
 
 	// returns the id of the current active state
 	GameStateID GetCurrentState() const;
@@ -34,6 +36,7 @@ private:
 	GameStateID currentState = GameStateID::None;
 
 	olc::Image& titleCard;
+	WindowAssets windowAssets;
 
 	bool quitRequested = false;
 };

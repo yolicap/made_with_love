@@ -21,7 +21,7 @@ private:
 public:
 	virtual ~Puzzle() = default;
 
-	virtual void Draw(olc::Draw& draw, float fElapsedTime) = 0;
+	virtual void Draw(olc::Draw& draw) = 0;
 	virtual void Update(float fElapsedTime, const PuzzleInput& input) = 0;
 	virtual bool isComplete() = 0;
 

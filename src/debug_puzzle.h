@@ -33,7 +33,7 @@ private:
 public:
 	DebugPuzzle();
 
-	void Draw(olc::Draw& draw, float fElapsedTime) override;
+	void Draw(olc::Draw& draw) override;
 	void Update(float fElapsedTime, const PuzzleInput& input) override;
 	bool isComplete() override;
 

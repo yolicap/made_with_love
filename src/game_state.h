@@ -33,6 +33,9 @@ public:
 	// draws the state
 	virtual void Draw() = 0;
 
+	// Draw on top of the monitor
+	virtual void DrawOverlay() {}
+
 
 protected:
 	// ref to the game engine

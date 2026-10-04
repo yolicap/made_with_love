@@ -26,8 +26,7 @@ DebugPuzzle::DebugPuzzle() {
 
 }
 
-void DebugPuzzle::Draw(olc::Draw& draw, float fElapsedTime) {
-	(void)fElapsedTime;
+void DebugPuzzle::Draw(olc::Draw& draw) {
 
     if (complete) {
         draw.StringProp({40, 45}, "Puzzle Complete!", olc::Colour::VERY_DARK_GREEN, {1.5, 1.5});
