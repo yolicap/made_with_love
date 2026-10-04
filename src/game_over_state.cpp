@@ -27,7 +27,7 @@ void GameOverState::Draw()
 {
 	olc::Draw& draw = game.GetDraw();
 
-	draw.Clear(olc::Colour::BLACK);
+	draw.Clear(GAME_BACKGROUND_COLOR);
 
 	const std::string gameOverText = "GAME OVER";
 
@@ -47,7 +47,7 @@ void GameOverState::Draw()
 			110.0f
 		},
 		gameOverText,
-		olc::Colour::WHITE,
+		GAME_TEXT_COLOR,
 		titleScale
 	);
 
@@ -69,7 +69,7 @@ void GameOverState::Draw()
 			200.0f
 		},
 		returnText,
-		olc::Colour::WHITE,
+		GAME_TEXT_COLOR,
 		returnScale
 	);
 }

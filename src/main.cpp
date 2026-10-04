@@ -39,6 +39,7 @@ protected:
 	olc::Image cursorGrabbing;
 
 	olc::Image puzzleContent; // TODO: malloc this instead
+	olc::Image monitorBorder;
 	DebugPuzzle dbgPuzzle1;
 
 
@@ -67,6 +68,7 @@ public:
 		CreateImageFromFile(cursor, "./assets/Cursor/Cursor_Default.png");
 		CreateImageFromFile(cursorGrab, "./assets/Cursor/Cursor_Grab.png");
 		CreateImageFromFile(cursorGrabbing, "./assets/Cursor/Cursor_Grabbing.png");
+		CreateImageFromFile(monitorBorder, "./assets/Monitor_Border.png");
 
 		olc::vf2d pos {100.0, 100.0};
 
@@ -96,8 +98,7 @@ public:
 
 
 	// Called every frame
-	bool OnUserUpdate(float fElapsedTime) override
-	{
+	bool OnUserUpdate(float fElapsedTime) override {
 		GameParameters.screen = &GetScreen();
 		GameParameters.leftClickPressed = mouse.GetButton(0).bPressed;
 		GameParameters.leftClickHeld = mouse.GetButton(0).bHeld;
@@ -112,11 +113,12 @@ public:
 		GameStateID prevState = gameController.GetCurrentState();
 
 		//Update the game controller, which will update the current state
-		gameController.Update(fElapsedTime);
+		if (!gameController.Update(fElapsedTime)) {
+			return false;
+		}
 
-		if (gameController.GetCurrentState() == GameStateID::Gameplay)
-		{
-			draw.Clear(olc::Colour::BLACK);
+		if (gameController.GetCurrentState() == GameStateID::Gameplay) {
+			draw.Clear(GAME_BACKGROUND_COLOR);
 
 			for (int i = 0; i < puzzleWindows.size(); i++) {
 				if (prevState != GameStateID::Gameplay) {
@@ -124,8 +126,11 @@ public:
 				}
 				puzzleWindows[i].Draw(draw, fElapsedTime);
 			}
+
+			draw.SetTarget(GetScreen());
 		}
 		else {
+			draw.SetTarget(GetScreen());
 			gameController.Draw();
 		}
 
@@ -135,6 +140,15 @@ public:
 		// 	draw.Image(cursorGrabbing, GameParameters.mousePosition);
 		// else
 		// 	draw.Image(cursorGrab, GameParameters.mousePosition);
+
+		draw.SetTarget(GetScreen());
+
+		olc::vf2d borderScale = {
+			static_cast<float>(ScreenSize().x) / static_cast<float>(monitorBorder.Size().x),
+			static_cast<float>(ScreenSize().y) / static_cast<float>(monitorBorder.Size().y)
+		};
+
+		draw.Image(monitorBorder, { 0.0f, 0.0f }, borderScale);
 
 		return true;
 	}

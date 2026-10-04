@@ -1,4 +1,9 @@
+#pragma once
+
 #include "olcPixelGameEngine3.h"
+
+inline const olc::Pixel GAME_BACKGROUND_COLOR = olc::Pixel(0xe3, 0xf5, 0xf1);
+inline const olc::Pixel GAME_TEXT_COLOR = olc::Pixel(0x9f, 0x3a, 0x52);
 
 // "global" variables go here :D
 
