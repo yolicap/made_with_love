@@ -157,8 +157,8 @@ public:
 		windowManager.AddWindow(
 			std::make_unique<PuzzleWindow>(
 				*this,
-				olc::vf2d{ 260.0f, 140.0f },
-				220.0f,
+				olc::vf2d{ 280.0f, 80.0f },
+				120.0f,
 				120.0f,
 				windowAssets,
 				olc::vi2d{ 325, 125 },
