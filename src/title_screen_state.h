@@ -48,7 +48,7 @@ private:
 		"AlfaDrottning",
 		"JustBrailey",
 		"Put ur User",
-		"Put ur User"
+		"dacnum0" // please don't put me in the engine header
 	};
 
 	int selectedOption = 0;

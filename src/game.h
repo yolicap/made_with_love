@@ -1,7 +1,7 @@
 #pragma once
 
 #include "olcPixelGameEngine3.h"
-#define GAME_TIME_LIMIT (5)
+#define GAME_TIME_LIMIT (5*60)
 
 inline const olc::Pixel GAME_BACKGROUND_COLOR = olc::Pixel(0x07, 0x0c, 0x1d);
 inline const olc::Pixel GAME_TEXT_COLOR = olc::Pixel(0xee, 0xe9, 0x8a);

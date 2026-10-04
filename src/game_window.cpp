@@ -21,7 +21,7 @@ GameWindow::GameWindow(olc::PixelGameEngine& game, olc::vf2d p, float w, float h
 
 	held = false;
 	open = true;
-	holdCloseButton = false;
+	mouseOverCloseButton = false;
 	heldOffsetPosition = { 0.0f, 0.0f };
 }
 
