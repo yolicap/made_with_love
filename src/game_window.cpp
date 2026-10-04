@@ -57,7 +57,7 @@ void GameWindow::Draw(olc::Draw& draw) {
 
 	// Draw button
 	draw.Image(
-		holdCloseButton
+		mouseOverCloseButton
 		? *assets.closeButtonDown
 		: *assets.closeButtonUp,
 		{
@@ -170,11 +170,10 @@ void GameWindow::Update(bool active) {
 	// only active window is allowed to respond to mouse clicks
 	if (!active) {
 		held = false;
-		holdCloseButton = false;
 		return;
 	}
 
-	bool mouseOverCloseButton = inBounds(
+	mouseOverCloseButton = inBounds(
 		GameParameters.mousePosition.x,
 		GameParameters.mousePosition.y,
 		position.x + width - assets.closeButtonUp->Size().x,
@@ -183,11 +182,6 @@ void GameWindow::Update(bool active) {
 		position.y + assets.closeButtonUp->Size().y
 	);
 
-	if (mouseOverCloseButton) {
-		holdCloseButton = true;
-	} else {
-		holdCloseButton = false;
-	}
 
 	// If clicked on top, set held
 	if (GameParameters.leftClickPressed && onHandle(GameParameters.mousePosition)) {
