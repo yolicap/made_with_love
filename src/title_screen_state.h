@@ -47,7 +47,7 @@ private:
 	std::vector<std::string> credits = {
 		"AlfaDrottning",
 		"JustBrailey",
-		"Put ur User",
+		"yolicap",
 		"dacnum0" // please don't put me in the engine header
 	};
 

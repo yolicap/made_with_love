@@ -4,6 +4,7 @@
 
 #include "game.h"
 #include "debug_puzzle.h"
+#include "packing_puzzle.h"
 #include "game_controller.h"
 #include "puzzle_window.h"
 #include "window_manager.h"
@@ -41,6 +42,22 @@ protected:
 	float fGameplayTimeRemaining;
 
 
+	olc::Image memberBlue;
+	olc::Image memberBlueStacked;
+	olc::Image memberBlueWithShadow;
+	olc::Image memberGreen;
+	olc::Image memberGreenStacked;
+	olc::Image memberGreenWithShadow;
+	olc::Image memberGrey;
+	olc::Image memberGreyStacked;
+	olc::Image memberGreyWithShadow;
+	olc::Image memberPink;
+	olc::Image memberPinkStacked;
+	olc::Image memberPinkWithShadow;
+    olc::Image memberRed;
+	olc::Image memberRedStacked;
+	olc::Image memberRedWithShadow;
+
 private:
 	WindowManager windowManager;
 	GameController gameController;
@@ -65,6 +82,21 @@ public:
 		CreateImageFromFile(cursorGrabbing, "./assets/Cursor/Cursor_Grabbing.png");
 		CreateImageFromFile(monitorBorder, "./assets/Monitor_Border.png");
 		CreateImageFromFile(titleCard, "./assets/Title_card.png");
+		CreateImageFromFile(memberBlue, "./assets/Struct/Struct_Blue.png");
+		CreateImageFromFile(memberBlueStacked, "./assets/Struct/Struct_Blue_Stacked.png");
+		CreateImageFromFile(memberBlueWithShadow, "./assets/Struct/Struct_Blue_With_Shadow.png");
+		CreateImageFromFile(memberGreen, "./assets/Struct/Struct_Green.png");
+		CreateImageFromFile(memberGreenStacked, "./assets/Struct/Struct_Green_Stacked.png");
+		CreateImageFromFile(memberGreenWithShadow, "./assets/Struct/Struct_Green_With_Shadow.png");
+		CreateImageFromFile(memberGrey, "./assets/Struct/Struct_Grey.png");
+		CreateImageFromFile(memberGreyStacked, "./assets/Struct/Struct_Grey_Stacked.png");
+		CreateImageFromFile(memberGreyWithShadow, "./assets/Struct/Struct_Grey_With_Shadow.png");
+		CreateImageFromFile(memberPink, "./assets/Struct/Struct_Pink.png");
+		CreateImageFromFile(memberPinkStacked, "./assets/Struct/Struct_Pink_Stacked.png");
+		CreateImageFromFile(memberPinkWithShadow, "./assets/Struct/Struct_Pink_With_Shadow.png");
+		CreateImageFromFile(memberRed, "./assets/Struct/Struct_Red.png");
+		CreateImageFromFile(memberRedStacked, "./assets/Struct/Struct_Red_Stacked.png");
+		CreateImageFromFile(memberRedWithShadow, "./assets/Struct/Struct_Red_With_Shadow.png");
 
 		WindowAssets windowAssets = {
 			&windowTopCornerImage,
@@ -73,6 +105,24 @@ public:
 			&windowEdgeImage,
 			&windowButtonUp,
 			&windowButtonDown
+		};
+
+		PackingPuzzleAssets packingPuzzleAssets = {
+			&memberBlue,
+			&memberBlueStacked,
+			&memberBlueWithShadow,
+			&memberGreen,
+			&memberGreenStacked,
+			&memberGreenWithShadow,
+			&memberGrey,
+			&memberGreyStacked,
+			&memberGreyWithShadow,
+			&memberPink,
+			&memberPinkStacked,
+			&memberPinkWithShadow,
+    		&memberRed,
+			&memberRedStacked,
+			&memberRedWithShadow,
 		};
 
 		// First debug puzzle window
@@ -100,6 +150,19 @@ public:
 				windowAssets,
 				olc::vi2d{ 325, 125 },
 				std::make_unique<DebugPuzzle>()
+			)
+		);
+
+		// Packing puzzle 
+		windowManager.AddWindow(
+			std::make_unique<PuzzleWindow>(
+				*this,
+				olc::vf2d{ 260.0f, 140.0f },
+				220.0f,
+				120.0f,
+				windowAssets,
+				olc::vi2d{ 325, 125 },
+				std::make_unique<PackingPuzzle>(packingPuzzleAssets)
 			)
 		);
 
