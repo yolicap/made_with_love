@@ -7,17 +7,18 @@
 #include "debug_puzzle.h"
 #include "game_window.h"
 #include "puzzle_window.h"
+#include "game_controller.h"
 
 #include <numbers>
 
 GAME_PARAMETERS GameParameters;
 
 float rand_float(float min, float max) {
-    return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(max - min)));
+	return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (max - min)));
 }
 
 float rand_int(int min, int max) {
-    return min + rand() % (max - min + 1);
+	return min + rand() % (max - min + 1);
 }
 
 // class PackingPuzzle : public Puzzle {
@@ -84,7 +85,7 @@ float rand_int(int min, int max) {
 class MadeWithLove : public olc::PixelGameEngine {
 
 protected:
-    // std::vector<Puzzle*> puzzles;
+	// std::vector<Puzzle*> puzzles;
 	std::vector<PuzzleWindow> puzzleWindows;
 
 	olc::Image windowTopCornerImage;
@@ -96,7 +97,16 @@ protected:
 	olc::Image puzzleContent; // TODO: malloc this instead
 	DebugPuzzle dbgPuzzle1;
 
+
+private:
+	GameController gameController;
+
+
 public:
+
+	MadeWithLove() : gameController(*this) {
+		sAppName = "Made With Love";
+	}
 
 	// Called once when the game starts
 	bool OnUserCreate() override
@@ -109,17 +119,17 @@ public:
 		CreateImageFromFile(windowEdgeImage, "./assets/Window_Edge_Side+Bottom.png");
 		CreateImageFromFile(windowButtonUp, "./assets/Close_Button_Up.png");
 
-		olc::vf2d pos {100.0, 100.0};
+		olc::vf2d pos{ 100.0, 100.0 };
 
 		// TODO: debug puzzle shapes should be set in globals
 		CreateImage(puzzleContent, { 325, 125 });
 		dbgPuzzle1 = DebugPuzzle();
 
 		puzzleWindows.emplace_back(PuzzleWindow(
-			pos, 
-			325, 
-			125, 
-			&windowTopCornerImage, 
+			pos,
+			325,
+			125,
+			&windowTopCornerImage,
 			&windowBottomCornerImage,
 			&windowTopEdgeImage,
 			&windowEdgeImage,
@@ -128,20 +138,31 @@ public:
 			&dbgPuzzle1
 		));
 
+		gameController.Start();
+
 		return true;
 	}
+
 
 	// Called every frame
 	bool OnUserUpdate(float fElapsedTime) override
 	{
 		GameParameters.screen = &GetScreen();
 
-		// Clear screen to a background color
-		draw.Clear(olc::Colour::BLACK);
+		//Update the game controller, which will update the current state
+		gameController.Update(fElapsedTime);
 
-		for(int i = 0; i < puzzleWindows.size(); i++) {
-            puzzleWindows[i].Draw(draw, fElapsedTime);
-        }
+		if (gameController.GetCurrentState() == GameStateID::Gameplay)
+		{
+			draw.Clear(olc::Colour::BLACK);
+
+			for (int i = 0; i < puzzleWindows.size(); i++) {
+				puzzleWindows[i].Draw(draw, fElapsedTime);
+			}
+		}
+		else {
+			gameController.Draw();
+		}
 
 		return true;
 	}
