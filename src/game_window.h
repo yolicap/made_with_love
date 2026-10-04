@@ -51,8 +51,8 @@ private:
 	bool held;
 	olc::vf2d heldOffsetPosition;
 
-	bool open;
-	bool holdCloseButton;
+    bool open;
+    bool mouseOverCloseButton;
 
 private:
 	void DrawEdges(

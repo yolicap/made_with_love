@@ -37,6 +37,9 @@ protected:
 
 	olc::Image monitorBorder;
 	olc::Image titleCard;
+	// getting state from the controller is hard
+	float fGameplayTimeRemaining;
+
 
 private:
 	WindowManager windowManager;
@@ -108,6 +111,18 @@ public:
 		return true;
 	}
 
+	void DrawTimer() {
+		char clockStr[6];
+		int minsRemaining = fGameplayTimeRemaining / 60;
+		int secsRemaining = (fGameplayTimeRemaining - minsRemaining * 60) + 1;
+		snprintf(clockStr, sizeof(clockStr), "%.2d:%.2d", minsRemaining, secsRemaining);
+		olc::vf2d timerPos = {518, 342};
+		const olc::vf2d normalScale = { 1.5f, 1.5f };
+		draw.FilledRect({515,338},{57,20}, olc::Pixel(100,100,100), olc::Colour::DARK_GREY);
+		draw.StringProp(timerPos, clockStr, GAME_TEXT_COLOR, normalScale);
+		draw.SetTarget(GetScreen());
+	}
+
 
 	// Called every frame
 	bool OnUserUpdate(float fElapsedTime) override {
@@ -131,11 +146,13 @@ public:
 
 			if (prevState != GameStateID::Gameplay) {
 				windowManager.OpenAll();
+				fGameplayTimeRemaining = GAME_TIME_LIMIT;
 			}
 
 			draw.Clear(GAME_BACKGROUND_COLOR);
 			windowManager.Update(fElapsedTime);
 			windowManager.Draw(draw, fElapsedTime);
+			fGameplayTimeRemaining -= fElapsedTime;
 		}
 		else {
 			draw.SetTarget(GetScreen());
@@ -162,6 +179,10 @@ public:
 			{ 0.0f, 0.0f },
 			borderScale
 		);
+
+		if (gameController.GetCurrentState() == GameStateID::Gameplay) {
+			DrawTimer();
+		}
 
 		return true;
 	}
