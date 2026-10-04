@@ -146,7 +146,7 @@ public:
 
 			if (prevState != GameStateID::Gameplay) {
 				windowManager.OpenAll();
-					fGameplayTimeRemaining = GAME_TIME_LIMIT;
+				fGameplayTimeRemaining = GAME_TIME_LIMIT;
 			}
 
 			draw.Clear(GAME_BACKGROUND_COLOR);
