@@ -55,7 +55,7 @@ GameStateID TitleScreenState::Update(float fElapsedTime) {
 
 void TitleScreenState::Draw() {
 	olc::Draw& draw = game.GetDraw();
-	draw.Clear(olc::Colour::BLACK);
+	draw.Clear(GAME_BACKGROUND_COLOR);
 
 	if (showingCredits) {
 		DrawCredits();
@@ -77,7 +77,7 @@ void TitleScreenState::DrawMainMenu() {
 	draw.StringProp(
 		{ titleX, 80.0f },
 		title,
-		olc::Colour::WHITE,
+		GAME_TEXT_COLOR,
 		titleScale
 	);
 
@@ -93,7 +93,7 @@ void TitleScreenState::DrawMainMenu() {
 		draw.StringProp(
 			{ textX, textY },
 			menuOptions[i],
-			olc::Colour::WHITE,
+			GAME_TEXT_COLOR,
 			normalScale
 		);
 
@@ -120,7 +120,7 @@ void TitleScreenState::DrawHeart(const olc::vf2d& position) {
 		{ 0, 0, 0, 1, 0, 0, 0 }
 	};
 
-	const olc::Pixel heartColor = olc::Pixel(145, 58, 82);
+	const olc::Pixel heartColor = olc::Pixel(0xbc, 0x59, 0x60);
 
 	for (int y = 0; y < 6; y++) {
 		for (int x = 0; x < 7; x++) {
@@ -151,7 +151,7 @@ void TitleScreenState::DrawCredits() {
 	draw.StringProp(
 		{ titleX, 60.0f },
 		title,
-		olc::Colour::WHITE,
+		GAME_TEXT_COLOR,
 		titleScale
 	);
 
@@ -167,7 +167,7 @@ void TitleScreenState::DrawCredits() {
 		draw.StringProp(
 			{ nameX, nameY },
 			name,
-			olc::Colour::WHITE,
+			GAME_TEXT_COLOR,
 			nameScale
 		);
 
@@ -187,7 +187,7 @@ void TitleScreenState::DrawCredits() {
 	draw.StringProp(
 		{ returnX, 315.0f },
 		returnText,
-		olc::Colour::WHITE
+		GAME_TEXT_COLOR
 	);
 }
 

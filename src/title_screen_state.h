@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game_state.h"
+#include "game.h"
 
 #include <functional>
 #include <string>
