@@ -10,6 +10,7 @@
 
         fTickerTime = 0.0f;
         complete = false;
+        numOfWords = 3;
 
         charMember.position = {10, 10};
         charMember.numOfBytes = 1;
@@ -43,7 +44,7 @@
         intMember.color = RED;
         intMember.shape = {
             assets.memberBlue->Size().x,
-            assets.memberBlue->Size().y * intMember.numOfBytes
+            assets.memberBlue->Size().y * intMember.numOfBytes // TODO : Adjust for stacked
         };
         structMembers.push_back(intMember);
     };
@@ -51,47 +52,62 @@
     void PackingPuzzle::Draw(olc::Draw& draw, float fElapsedTime) {
 
         // Draw struct frame
+        // for (int word = 0; word < numOfWords; word++) {
+        //     auto batch = draw.CreateImageBatch(*memberBarStacked);
+        //     for (int byte = 0; byte < 7; byte++) {
+
+        //     }
+        // }
 
         // Draw struct members
-        for (StructMember& member: structMembers) {
+        for (StructMember member: structMembers) {
 
             // Draw all bytes in a member
-            olc::Image* memberBarWithShadow;
-            olc::Image* memberBar;
+            olc::Image* memberBarStacked;
+            olc::Image* memberBarBottom;
             switch (member.color) {
                 case BLUE : 
-                    memberBarWithShadow = assets.memberBlueWithShadow;
-                    memberBar = assets.memberBlue;
+                    memberBarStacked = assets.memberBlueStacked;
+                    memberBarBottom = member.held ? assets.memberBlue : assets.memberBlueWithShadow;
                 break;
                 case GREEN : 
-                    memberBarWithShadow = assets.memberGreenWithShadow;
-                    memberBar = assets.memberGreen;
+                    memberBarStacked = assets.memberGreenStacked;
+                    memberBarBottom = member.held ? assets.memberGreen : assets.memberGreenWithShadow;
                 break;
                 case GREY : 
-                    memberBarWithShadow = assets.memberGreyWithShadow;
-                    memberBar = assets.memberGrey;
+                    memberBarStacked = assets.memberGreyStacked;
+                    memberBarBottom = member.held ? assets.memberGrey : assets.memberGreyWithShadow;
                 break;
                 case PINK : 
-                    memberBarWithShadow = assets.memberPinkWithShadow;
-                    memberBar = assets.memberPink;
+                    memberBarStacked = assets.memberPinkStacked;
+                    memberBarBottom = member.held ? assets.memberPink : assets.memberPinkWithShadow;
                 break;
                 case RED : 
-                    memberBarWithShadow = assets.memberRedWithShadow;
-                    memberBar = assets.memberRed;
+                    memberBarStacked = assets.memberRedStacked;
+                    memberBarBottom = member.held ? assets.memberRed : assets.memberRedWithShadow;
             }
 
-            auto batch = draw.CreateImageBatch(*memberBarWithShadow);
-            for (int i = 0; i < member.numOfBytes; i++) {
+            auto batch = draw.CreateImageBatch(*memberBarStacked);
+            for (int i = 0; i < member.numOfBytes-1; i++) {
                 draw.Image(
                     batch, 
-                    *memberBarWithShadow, 
+                    *memberBarStacked, 
                     {
                         static_cast<float>(member.position.x), 
-                        static_cast<float>(member.position.y + ((memberBar->Size().y - 1) * i))
+                        static_cast<float>(member.position.y + ((memberBarStacked->Size().y-2) * i))
                     }
                 );
             }
             draw.Batch(batch);
+            
+            draw.Image(
+                *memberBarBottom, 
+                {
+                    static_cast<float>(member.position.x), 
+                    static_cast<float>(member.position.y + ((memberBarStacked->Size().y-2) * (member.numOfBytes-1)))
+                }
+            );
+            
         }
     };
 
@@ -114,7 +130,6 @@
         // Held member should already be in back. Check if held and update
         if (structMembers.back().held && input.leftClickHeld) {
             // TODO : these namings are kinda confusing. need to fix
-            // TODO: remove shadow
             StructMember& activeMember = structMembers.back();
             activeMember.position = input.mousePosition - activeMember.heldOffsetPosition;
         }

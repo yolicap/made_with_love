@@ -43,14 +43,19 @@ protected:
 
 
 	olc::Image memberBlue;
+	olc::Image memberBlueStacked;
 	olc::Image memberBlueWithShadow;
 	olc::Image memberGreen;
+	olc::Image memberGreenStacked;
 	olc::Image memberGreenWithShadow;
 	olc::Image memberGrey;
+	olc::Image memberGreyStacked;
 	olc::Image memberGreyWithShadow;
 	olc::Image memberPink;
+	olc::Image memberPinkStacked;
 	olc::Image memberPinkWithShadow;
     olc::Image memberRed;
+	olc::Image memberRedStacked;
 	olc::Image memberRedWithShadow;
 
 private:
@@ -78,14 +83,19 @@ public:
 		CreateImageFromFile(monitorBorder, "./assets/Monitor_Border.png");
 		CreateImageFromFile(titleCard, "./assets/Title_card.png");
 		CreateImageFromFile(memberBlue, "./assets/Struct/Struct_Blue.png");
+		CreateImageFromFile(memberBlueStacked, "./assets/Struct/Struct_Blue_Stacked.png");
 		CreateImageFromFile(memberBlueWithShadow, "./assets/Struct/Struct_Blue_With_Shadow.png");
 		CreateImageFromFile(memberGreen, "./assets/Struct/Struct_Green.png");
+		CreateImageFromFile(memberGreenStacked, "./assets/Struct/Struct_Green_Stacked.png");
 		CreateImageFromFile(memberGreenWithShadow, "./assets/Struct/Struct_Green_With_Shadow.png");
 		CreateImageFromFile(memberGrey, "./assets/Struct/Struct_Grey.png");
+		CreateImageFromFile(memberGreyStacked, "./assets/Struct/Struct_Grey_Stacked.png");
 		CreateImageFromFile(memberGreyWithShadow, "./assets/Struct/Struct_Grey_With_Shadow.png");
 		CreateImageFromFile(memberPink, "./assets/Struct/Struct_Pink.png");
+		CreateImageFromFile(memberPinkStacked, "./assets/Struct/Struct_Pink_Stacked.png");
 		CreateImageFromFile(memberPinkWithShadow, "./assets/Struct/Struct_Pink_With_Shadow.png");
-		CreateImageFromFile(memberRed, "./assets/Struct/Struct_Blue.png");
+		CreateImageFromFile(memberRed, "./assets/Struct/Struct_Red.png");
+		CreateImageFromFile(memberRedStacked, "./assets/Struct/Struct_Red_Stacked.png");
 		CreateImageFromFile(memberRedWithShadow, "./assets/Struct/Struct_Red_With_Shadow.png");
 
 		WindowAssets windowAssets = {
@@ -99,14 +109,19 @@ public:
 
 		PackingPuzzleAssets packingPuzzleAssets = {
 			&memberBlue,
+			&memberBlueStacked,
 			&memberBlueWithShadow,
 			&memberGreen,
+			&memberGreenStacked,
 			&memberGreenWithShadow,
 			&memberGrey,
+			&memberGreyStacked,
 			&memberGreyWithShadow,
 			&memberPink,
+			&memberPinkStacked,
 			&memberPinkWithShadow,
     		&memberRed,
+			&memberRedStacked,
 			&memberRedWithShadow,
 		};
 

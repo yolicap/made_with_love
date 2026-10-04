@@ -7,14 +7,19 @@
 
 struct PackingPuzzleAssets {
 	olc::Image* memberBlue = nullptr;
+    olc::Image* memberBlueStacked = nullptr;
 	olc::Image* memberBlueWithShadow = nullptr;
 	olc::Image* memberGreen = nullptr;
+    olc::Image* memberGreenStacked = nullptr;
 	olc::Image* memberGreenWithShadow = nullptr;
 	olc::Image* memberGrey = nullptr;
+    olc::Image* memberGreyStacked = nullptr;
 	olc::Image* memberGreyWithShadow = nullptr;
 	olc::Image* memberPink = nullptr;
+    olc::Image* memberPinkStacked = nullptr;
 	olc::Image* memberPinkWithShadow = nullptr;
     olc::Image* memberRed = nullptr;
+    olc::Image* memberRedStacked = nullptr;
 	olc::Image* memberRedWithShadow = nullptr;
 };
 
@@ -30,6 +35,8 @@ class PackingPuzzle : public Puzzle {
 private:
 	static const olc::vf2d shape;
     PackingPuzzleAssets assets;
+
+    uint8_t numOfWords;
 
 	float fTickerTime;
 	bool complete;
