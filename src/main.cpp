@@ -3,18 +3,19 @@
 #define OLC_PGE3_APPLICATION
 
 #include "game.h"
-#include "puzzle.h"
 #include "debug_puzzle.h"
-#include "game_window.h"
-#include "puzzle_window.h"
 #include "game_controller.h"
+#include "puzzle_window.h"
+#include "window_manager.h"
 
+#include <memory>
 #include <numbers>
 
 GAME_PARAMETERS GameParameters;
 
 float rand_float(float min, float max) {
-	return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (max - min)));
+	return min + static_cast<float>(rand()) /
+		static_cast<float>(RAND_MAX / (max - min));
 }
 
 float rand_int(int min, int max) {
@@ -22,11 +23,7 @@ float rand_int(int min, int max) {
 }
 
 class MadeWithLove : public olc::PixelGameEngine {
-
 protected:
-	// std::vector<Puzzle*> puzzles;
-	std::vector<PuzzleWindow> puzzleWindows;
-
 	olc::Image windowTopCornerImage;
 	olc::Image windowBottomCornerImage;
 	olc::Image windowTopEdgeImage;
@@ -38,24 +35,20 @@ protected:
 	olc::Image cursorGrab;
 	olc::Image cursorGrabbing;
 
-	olc::Image puzzleContent; // TODO: malloc this instead
 	olc::Image monitorBorder;
-	DebugPuzzle dbgPuzzle1;
-
+	olc::Image titleCard;
 
 private:
+	WindowManager windowManager;
 	GameController gameController;
 
-
 public:
-
-	MadeWithLove() : gameController(*this) {
+	MadeWithLove() : gameController(*this, titleCard) {
 		sAppName = "Made With Love";
 	}
 
 	// Called once when the game starts
-	bool OnUserCreate() override
-	{
+	bool OnUserCreate() override {
 		GameParameters.screen = &GetScreen();
 
 		CreateImageFromFile(windowTopCornerImage, "./assets/Window_Corner_Top.png");
@@ -64,31 +57,50 @@ public:
 		CreateImageFromFile(windowEdgeImage, "./assets/Window_Edge_Side+Bottom.png");
 		CreateImageFromFile(windowButtonUp, "./assets/Close_Button_Up.png");
 		CreateImageFromFile(windowButtonDown, "./assets/Close_Button_Down.png");
-
 		CreateImageFromFile(cursor, "./assets/Cursor/Cursor_Default.png");
 		CreateImageFromFile(cursorGrab, "./assets/Cursor/Cursor_Grab.png");
 		CreateImageFromFile(cursorGrabbing, "./assets/Cursor/Cursor_Grabbing.png");
 		CreateImageFromFile(monitorBorder, "./assets/Monitor_Border.png");
+		CreateImageFromFile(titleCard, "./assets/Title_card.png");
 
-		olc::vf2d pos {100.0, 100.0};
-
-		// TODO: debug puzzle shapes should be set in globals
-		CreateImage(puzzleContent, { 325, 125 });
-		dbgPuzzle1 = DebugPuzzle();
-
-		puzzleWindows.emplace_back(PuzzleWindow(
-			pos, 
-			220, 
-			120, 
-			&windowTopCornerImage, 
+		WindowAssets windowAssets = {
+			&windowTopCornerImage,
 			&windowBottomCornerImage,
 			&windowTopEdgeImage,
 			&windowEdgeImage,
 			&windowButtonUp,
-			&windowButtonDown,
-			&puzzleContent,
-			&dbgPuzzle1
-		));
+			&windowButtonDown
+		};
+
+		// First debug puzzle window
+		windowManager.AddWindow(
+			std::make_unique<PuzzleWindow>(
+				*this,
+				olc::vf2d{ 100.0f, 90.0f },
+				220.0f,
+				120.0f,
+				windowAssets,
+				olc::vi2d{ 325, 125 },
+				std::make_unique<DebugPuzzle>()
+			)
+		);
+
+		// Second debug puzzle window.
+		// Uses a separate DebugPuzzle instance so the puzzles
+		// do not share state.
+		windowManager.AddWindow(
+			std::make_unique<PuzzleWindow>(
+				*this,
+				olc::vf2d{ 260.0f, 140.0f },
+				220.0f,
+				120.0f,
+				windowAssets,
+				olc::vi2d{ 325, 125 },
+				std::make_unique<DebugPuzzle>()
+			)
+		);
+
+		draw.SetTarget(GetScreen());
 
 		gameController.Start();
 		// ShowMouseCursor(false);
@@ -106,28 +118,24 @@ public:
 
 		GameParameters.mousePosition = mouse.GetPosition();
 
-		for(int i = 0; i < puzzleWindows.size(); i++) {
-            puzzleWindows[i].Update(fElapsedTime);
-        }
-
 		GameStateID prevState = gameController.GetCurrentState();
 
 		//Update the game controller, which will update the current state
 		if (!gameController.Update(fElapsedTime)) {
 			return false;
 		}
+		GameStateID currentState = gameController.GetCurrentState();
+		draw.SetTarget(GetScreen());
 
-		if (gameController.GetCurrentState() == GameStateID::Gameplay) {
-			draw.Clear(GAME_BACKGROUND_COLOR);
+		if (currentState == GameStateID::Gameplay) {
 
-			for (int i = 0; i < puzzleWindows.size(); i++) {
-				if (prevState != GameStateID::Gameplay) {
-					puzzleWindows[i].Open();
-				}
-				puzzleWindows[i].Draw(draw, fElapsedTime);
+			if (prevState != GameStateID::Gameplay) {
+				windowManager.OpenAll();
 			}
 
-			draw.SetTarget(GetScreen());
+			draw.Clear(GAME_BACKGROUND_COLOR);
+			windowManager.Update(fElapsedTime);
+			windowManager.Draw(draw, fElapsedTime);
 		}
 		else {
 			draw.SetTarget(GetScreen());
@@ -141,6 +149,7 @@ public:
 		// else
 		// 	draw.Image(cursorGrab, GameParameters.mousePosition);
 
+		// always make sure the monitor border is rendered to the screen, after everything else has been drawn
 		draw.SetTarget(GetScreen());
 
 		olc::vf2d borderScale = {
@@ -148,16 +157,17 @@ public:
 			static_cast<float>(ScreenSize().y) / static_cast<float>(monitorBorder.Size().y)
 		};
 
-		draw.Image(monitorBorder, { 0.0f, 0.0f }, borderScale);
+		draw.Image(
+			monitorBorder,
+			{ 0.0f, 0.0f },
+			borderScale
+		);
 
 		return true;
 	}
-
 };
 
-
-int main()
-{
+int main() {
 	MadeWithLove game;
 
 	// Configure the game window
@@ -172,9 +182,7 @@ int main()
 	// Game screen size in logical pixels
 	config.vScreenSize = { 640, 360 };
 
-
-	if (game.Construct(config))
-	{
+	if (game.Construct(config)) {
 		game.Start();
 	}
 

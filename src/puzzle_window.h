@@ -6,29 +6,25 @@
 #include "game_window.h"
 #include "puzzle.h"
 
+#include <memory>
+
 class PuzzleWindow : public GameWindow {
+private: 
+	std::unique_ptr<Puzzle> puzzle;
 
-	// TODO: when window is closed, pointers should be freed
-	Puzzle* puzzle;
-
-	public:
-	PuzzleWindow(        
-		olc::vf2d p, 
-        float w, 
-        float h, 
-        olc::Image* wtc, 
-        olc::Image* wbc, 
-        olc::Image* wte, 
-        olc::Image* we, 
-        olc::Image* wbu,
-        olc::Image* wbd,
-		olc::Image* wc,
-		Puzzle* pzl
+public:
+	PuzzleWindow(
+		olc::PixelGameEngine& game,
+		olc::vf2d p,
+		float w,
+		float h,
+		const WindowAssets& assets,
+		olc::vi2d contentSize,
+		std::unique_ptr<Puzzle> pzl
 	);
 
 	void Draw(olc::Draw& draw, float fElapsedTime);
-	void Update(float fElapsedTime);
-
+	void Update(float fElapsedTime, bool active);
 };
 
 #endif

@@ -3,34 +3,58 @@
 #include "game.h"
 #include "puzzle_window.h"
 
-PuzzleWindow::PuzzleWindow(        
-    olc::vf2d p, 
-    float w, 
-    float h, 
-    olc::Image* wtc, 
-    olc::Image* wbc, 
-    olc::Image* wte, 
-    olc::Image* we, 
-    olc::Image* wbu,
-    olc::Image* wbd,
-    olc::Image* wc,
-    Puzzle* pzl
-) : GameWindow(p, w, h, wtc, wbc, wte, we, wbu, wbd, wc) {
-    puzzle = pzl;
+#include <utility>
+
+PuzzleWindow::PuzzleWindow(
+	olc::PixelGameEngine& game,
+	olc::vf2d p,
+	float w,
+	float h,
+	const WindowAssets& assets,
+	olc::vi2d contentSize,
+	std::unique_ptr<Puzzle> pzl
+) : GameWindow(
+	game,
+	p,
+	w,
+	h,
+	assets,
+	contentSize
+),
+puzzle(std::move(pzl)) {
 }
 
 void PuzzleWindow::Draw(olc::Draw& draw, float fElapsedTime) {
-    GameWindow::Draw(draw);
-    // Draw window target
-    draw.SetTarget(*windowContent);
-    puzzle->Draw(draw, fElapsedTime);
-    draw.SetTarget(*(GameParameters.screen));
+	if (!IsOpen()) return;
+
+	// Draw window target
+	draw.SetTarget(GetWindowContent());
+
+	olc::Pixel backgroundColor = olc::Pixel(0xe3, 0xf5, 0xf1);
+
+	draw.Clear(backgroundColor);
+
+	puzzle->Draw(draw, fElapsedTime);
+
+	draw.SetTarget(*(GameParameters.screen));
+
+	GameWindow::Draw(draw);
 }
 
-void PuzzleWindow::Update(float fElapsedTime) {
-    GameWindow::Update();
-    // this is ghetto af im sorry
-    GameParameters.mousePosition - position;
-    puzzle->Update(fElapsedTime);
-    GameParameters.mousePosition + position;
+void PuzzleWindow::Update(float fElapsedTime, bool active) {
+	GameWindow::Update(active);
+	if (!IsOpen()) return;
+
+	PuzzleInput input;
+
+	input.active = active;
+
+	// this is ghetto af im sorry
+	// Convert the global mouse position into the puzzle's local window position.
+	// dw about it, I see the vision -bs
+	input.mousePosition = GameParameters.mousePosition - GetContentOrigin();
+	input.leftClickPressed = active && GameParameters.leftClickPressed;
+	input.leftClickHeld = active && GameParameters.leftClickHeld;
+	input.leftClickReleased = active && GameParameters.leftClickReleased;
+	puzzle->Update(fElapsedTime, input);
 }

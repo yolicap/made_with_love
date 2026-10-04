@@ -6,7 +6,7 @@
 class GameController {
 public:
 	//constructor
-	GameController(olc::PixelGameEngine& game);
+	GameController(olc::PixelGameEngine& game, olc::Image& titleCard);
 
 	// starts the game
 	void Start();
@@ -32,6 +32,8 @@ private:
 
 	// id of the current active state
 	GameStateID currentState = GameStateID::None;
+
+	olc::Image& titleCard;
 
 	bool quitRequested = false;
 };

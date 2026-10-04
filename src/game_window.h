@@ -1,56 +1,86 @@
 // game_window.h
-// #pragma once
 
 #ifndef GAME_WINDOW_H
 #define GAME_WINDOW_H
 
-class GameWindow {
+#include "olcPixelGameEngine3.h"
 
+struct WindowAssets {
+	olc::Image* topCorner = nullptr;
+	olc::Image* bottomCorner = nullptr;
+	olc::Image* topEdge = nullptr;
+	olc::Image* edge = nullptr;
+	olc::Image* closeButtonUp = nullptr;
+	olc::Image* closeButtonDown = nullptr;
+};
+
+class GameWindow {
+public:
+	GameWindow(
+		olc::PixelGameEngine& game,
+		olc::vf2d position,
+		float width,
+		float height,
+		const WindowAssets& assets,
+		olc::vi2d contentSize
+	);
+
+	virtual ~GameWindow() = default;
+
+	void Draw(olc::Draw& draw);
+	void Update(bool active);
+	void Open();
+
+	bool IsOpen() const;
+	bool ContainsPoint(const olc::vf2d& point) const;
+
+protected:
+	olc::Image& GetWindowContent();
+	olc::vf2d GetContentOrigin() const;
+
+protected:
+	olc::vf2d position;
+
+private:
 	float width;
 	float height;
 
-	olc::Image* windowTopCorner;
-	olc::Image* windowBottomCorner;
-	olc::Image* windowTopEdge;
-	olc::Image* windowEdge;
-	olc::Image* windowButtonUp;
-	olc::Image* windowButtonDown;
+	WindowAssets assets;
+	olc::Image windowContent;
 
-    bool held;
-    olc::vf2d heldOffsetPosition;
+	bool held;
+	olc::vf2d heldOffsetPosition;
 
-    bool open;
-    bool holdCloseButton;
+	bool open;
+	bool holdCloseButton;
 
-    protected:
-    olc::vf2d position; 
+private:
+	void DrawEdges(
+		olc::Draw& draw,
+		float x1,
+		float y1,
+		float x2,
+		float y2
+	);
 
-    public:
-    // TODO: when window is closed, THIS pointer should be freed
-    olc::Image* windowContent;
+	void DrawCorners(
+		olc::Draw& draw,
+		float x1,
+		float y1,
+		float x2,
+		float y2
+	);
 
-    GameWindow(
-        olc::vf2d p, 
-        float w, 
-        float h, 
-        olc::Image* wtc, 
-        olc::Image* wbc, 
-        olc::Image* wte, 
-        olc::Image* we, 
-        olc::Image* wbu,
-        olc::Image* wbd,
-        olc::Image* wc
-    );
-    void Draw(olc::Draw& draw);
-    void Update();
-    void Open();
+	bool onHandle(const olc::vf2d& point) const;
 
-	private:
-	void DrawEdges(olc::Draw& draw, float x1, float y1, float x2, float y2);
-	void DrawCorners(olc::Draw& draw, float x1, float y1, float x2, float y2);
-    bool onHandle(olc::vf2d point);
-    bool inBounds(float x, float y, float xMin, float yMin, float xMax, float yMax);
-
+	bool inBounds(
+		float x,
+		float y,
+		float xMin,
+		float yMin,
+		float xMax,
+		float yMax
+	) const;
 };
 
 #endif
