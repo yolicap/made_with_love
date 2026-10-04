@@ -14,9 +14,13 @@ class GameWindow {
 	olc::Image* windowTopEdge;
 	olc::Image* windowEdge;
 	olc::Image* windowButtonUp;
+	olc::Image* windowButtonDown;
 
     bool held;
     olc::vf2d heldOffsetPosition;
+
+    bool open;
+    bool holdCloseButton;
 
     protected:
     olc::vf2d position; 
@@ -34,15 +38,18 @@ class GameWindow {
         olc::Image* wte, 
         olc::Image* we, 
         olc::Image* wbu,
+        olc::Image* wbd,
         olc::Image* wc
     );
     void Draw(olc::Draw& draw);
     void Update();
+    void Open();
 
 	private:
 	void DrawEdges(olc::Draw& draw, float x1, float y1, float x2, float y2);
 	void DrawCorners(olc::Draw& draw, float x1, float y1, float x2, float y2);
     bool onHandle(olc::vf2d point);
+    bool inBounds(float x, float y, float xMin, float yMin, float xMax, float yMax);
 
 };
 

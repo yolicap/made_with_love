@@ -32,6 +32,7 @@ protected:
 	olc::Image windowTopEdgeImage;
 	olc::Image windowEdgeImage;
 	olc::Image windowButtonUp;
+	olc::Image windowButtonDown;
 
 	olc::Image cursor;
 	olc::Image cursorGrab;
@@ -61,6 +62,7 @@ public:
 		CreateImageFromFile(windowTopEdgeImage, "./assets/Window_Edge_Top.png");
 		CreateImageFromFile(windowEdgeImage, "./assets/Window_Edge_Side+Bottom.png");
 		CreateImageFromFile(windowButtonUp, "./assets/Close_Button_Up.png");
+		CreateImageFromFile(windowButtonDown, "./assets/Close_Button_Down.png");
 
 		CreateImageFromFile(cursor, "./assets/Cursor/Cursor_Default.png");
 		CreateImageFromFile(cursorGrab, "./assets/Cursor/Cursor_Grab.png");
@@ -81,6 +83,7 @@ public:
 			&windowTopEdgeImage,
 			&windowEdgeImage,
 			&windowButtonUp,
+			&windowButtonDown,
 			&puzzleContent,
 			&dbgPuzzle1
 		));
@@ -106,6 +109,8 @@ public:
             puzzleWindows[i].Update(fElapsedTime);
         }
 
+		GameStateID prevState = gameController.GetCurrentState();
+
 		//Update the game controller, which will update the current state
 		gameController.Update(fElapsedTime);
 
@@ -114,6 +119,9 @@ public:
 			draw.Clear(olc::Colour::BLACK);
 
 			for (int i = 0; i < puzzleWindows.size(); i++) {
+				if (prevState != GameStateID::Gameplay) {
+					puzzleWindows[i].Open();
+				}
 				puzzleWindows[i].Draw(draw, fElapsedTime);
 			}
 		}

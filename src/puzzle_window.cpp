@@ -12,9 +12,10 @@ PuzzleWindow::PuzzleWindow(
     olc::Image* wte, 
     olc::Image* we, 
     olc::Image* wbu,
+    olc::Image* wbd,
     olc::Image* wc,
     Puzzle* pzl
-) : GameWindow(p, w, h, wtc, wbc, wte, we, wbu, wc) {
+) : GameWindow(p, w, h, wtc, wbc, wte, we, wbu, wbd, wc) {
     puzzle = pzl;
 }
 

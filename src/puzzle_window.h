@@ -21,6 +21,7 @@ class PuzzleWindow : public GameWindow {
         olc::Image* wte, 
         olc::Image* we, 
         olc::Image* wbu,
+        olc::Image* wbd,
 		olc::Image* wc,
 		Puzzle* pzl
 	);
