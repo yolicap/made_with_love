@@ -10,16 +10,23 @@ void GameController::Start() {
 	ChangeState(GameStateID::TitleScreen);
 }
 
-void GameController::Update(float fElapsedTime) {
-	if (!activeState)
-		return;
+bool GameController::Update(float fElapsedTime) {
+	if (!activeState) {
+		return true;
+	}
 
 	GameStateID requestedState = activeState->Update(fElapsedTime);
+
+	if (quitRequested) {
+		return false;
+	}
 
 	// state returns None when it wants to stay active
 	if (requestedState != GameStateID::None) {
 		ChangeState(requestedState);
 	}
+
+	return true;
 }
 
 void GameController::Draw() {
@@ -45,7 +52,12 @@ void GameController::ChangeState(GameStateID newState) {
 	// create the new state
 	switch (newState) {
 	case GameStateID::TitleScreen:
-		activeState = std::make_unique<TitleScreenState>(game);
+		activeState = std::make_unique<TitleScreenState>(
+			game,
+			[this]() {
+				quitRequested = true;
+			}
+		);
 		break;
 
 	case GameStateID::Gameplay:
@@ -59,7 +71,6 @@ void GameController::ChangeState(GameStateID newState) {
 	case GameStateID::None:
 		break;
 	}
-
 
 	// if a valid state was created, store its id and notify it that it has become active
 	if (activeState) {

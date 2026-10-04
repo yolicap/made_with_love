@@ -2,9 +2,13 @@
 
 #include "game_state.h"
 
+#include <functional>
+#include <string>
+#include <vector>
+
 class TitleScreenState : public GameState {
 public:
-	TitleScreenState(olc::PixelGameEngine& game);
+	TitleScreenState(olc::PixelGameEngine& game, std::function<void()> onQuit);
 
 	void OnEnter() override;
 
@@ -15,18 +19,43 @@ public:
 	void Draw() override;
 
 private:
-	bool IsMouseInsideStartButton() const;
+	enum class MenuOption {
+		Start = 0,
+		Credits = 1,
+		Quit = 2
+	};
+
+	bool IsMouseOverOption(int index) const;
+
+	void DrawMainMenu();
+
+	void DrawCredits();
+
+	void DrawHeart(const olc::vf2d& position);
 
 private:
-	olc::vf2d startButtonPosition =
-	{
-		230.0f,
-		210.0f
+	std::function<void()> onQuit;
+
+	std::vector<std::string> menuOptions = {
+		"START",
+		"CREDITS",
+		"QUIT"
 	};
 
-	olc::vf2d startButtonSize =
-	{
-		180.0f,
-		50.0f
+	std::vector<std::string> credits = {
+		"Put ur User",
+		"JustBrailey",
+		"Put ur User",
+		"Put ur User"
 	};
+
+	int selectedOption = 0;
+
+	bool showingCredits = false;
+
+	const float menuStartY = 180.0f;
+	const float menuSpacing = 42.0f;
+
+	const olc::vf2d normalScale = { 2.0f, 2.0f };
+	const olc::vf2d selectedScale = { 2.25f, 2.25f };
 };

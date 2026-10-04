@@ -96,8 +96,7 @@ public:
 
 
 	// Called every frame
-	bool OnUserUpdate(float fElapsedTime) override
-	{
+	bool OnUserUpdate(float fElapsedTime) override {
 		GameParameters.screen = &GetScreen();
 		GameParameters.leftClickPressed = mouse.GetButton(0).bPressed;
 		GameParameters.leftClickHeld = mouse.GetButton(0).bHeld;
@@ -112,10 +111,11 @@ public:
 		GameStateID prevState = gameController.GetCurrentState();
 
 		//Update the game controller, which will update the current state
-		gameController.Update(fElapsedTime);
+		if (!gameController.Update(fElapsedTime)) {
+			return false;
+		}
 
-		if (gameController.GetCurrentState() == GameStateID::Gameplay)
-		{
+		if (gameController.GetCurrentState() == GameStateID::Gameplay) {
 			draw.Clear(olc::Colour::BLACK);
 
 			for (int i = 0; i < puzzleWindows.size(); i++) {
@@ -124,8 +124,11 @@ public:
 				}
 				puzzleWindows[i].Draw(draw, fElapsedTime);
 			}
+
+			draw.SetTarget(GetScreen());
 		}
 		else {
+			draw.SetTarget(GetScreen());
 			gameController.Draw();
 		}
 

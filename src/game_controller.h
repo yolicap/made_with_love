@@ -11,8 +11,7 @@ public:
 	// starts the game
 	void Start();
 
-	// update the currently active state. If the state requests a change, perform the transition
-	void Update(float fElapsedTime);
+	bool Update(float fElapsedTime);
 
 	// draw the currently active state
 	void Draw();
@@ -33,4 +32,6 @@ private:
 
 	// id of the current active state
 	GameStateID currentState = GameStateID::None;
+
+	bool quitRequested = false;
 };
