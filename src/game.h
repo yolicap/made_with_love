@@ -14,3 +14,4 @@ typedef struct
 } GAME_PARAMETERS;
 
 extern GAME_PARAMETERS GameParameters;
+extern float rand_int(int min, int max);

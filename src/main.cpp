@@ -103,7 +103,7 @@ public:
 		GameParameters.mousePosition = mouse.GetPosition();
 
 		for(int i = 0; i < puzzleWindows.size(); i++) {
-            puzzleWindows[i].Update();
+            puzzleWindows[i].Update(fElapsedTime);
         }
 
 		//Update the game controller, which will update the current state

@@ -5,8 +5,6 @@
 #define GAME_WINDOW_H
 
 class GameWindow {
-	// this is a vector btw
-    olc::vf2d position; 
 
 	float width;
 	float height;
@@ -19,6 +17,9 @@ class GameWindow {
 
     bool held;
     olc::vf2d heldOffsetPosition;
+
+    protected:
+    olc::vf2d position; 
 
     public:
     // TODO: when window is closed, THIS pointer should be freed

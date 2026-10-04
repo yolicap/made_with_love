@@ -26,6 +26,7 @@ class PuzzleWindow : public GameWindow {
 	);
 
 	void Draw(olc::Draw& draw, float fElapsedTime);
+	void Update(float fElapsedTime);
 
 };
 

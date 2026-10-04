@@ -25,3 +25,11 @@ void PuzzleWindow::Draw(olc::Draw& draw, float fElapsedTime) {
     puzzle->Draw(draw, fElapsedTime);
     draw.SetTarget(*(GameParameters.screen));
 }
+
+void PuzzleWindow::Update(float fElapsedTime) {
+    GameWindow::Update();
+    // this is ghetto af im sorry
+    GameParameters.mousePosition - position;
+    puzzle->Update(fElapsedTime);
+    GameParameters.mousePosition + position;
+}
