@@ -29,6 +29,11 @@ DebugPuzzle::DebugPuzzle() {
 void DebugPuzzle::Draw(olc::Draw& draw, float fElapsedTime) {
 	(void)fElapsedTime;
 
+    if (complete) {
+        draw.StringProp({40, 45}, "Puzzle Complete!", olc::Colour::VERY_DARK_GREEN, {1.5, 1.5});
+        return;
+    }
+
 	// Determine how many characters fit on the screen
 	olc::vf2d vSizeOfChar = draw.GetTextSize("x");
 	// olc::vf2d nVisibleChars = shape.x / vSizeOfChar;
