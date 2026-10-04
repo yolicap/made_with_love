@@ -4,6 +4,7 @@
 
 #include "game.h"
 #include "debug_puzzle.h"
+#include "packing_puzzle.h"
 #include "game_controller.h"
 #include "puzzle_window.h"
 #include "window_manager.h"
@@ -41,6 +42,17 @@ protected:
 	float fGameplayTimeRemaining;
 
 
+	olc::Image memberBlue;
+	olc::Image memberBlueWithShadow;
+	olc::Image memberGreen;
+	olc::Image memberGreenWithShadow;
+	olc::Image memberGrey;
+	olc::Image memberGreyWithShadow;
+	olc::Image memberPink;
+	olc::Image memberPinkWithShadow;
+    olc::Image memberRed;
+	olc::Image memberRedWithShadow;
+
 private:
 	WindowManager windowManager;
 	GameController gameController;
@@ -65,6 +77,16 @@ public:
 		CreateImageFromFile(cursorGrabbing, "./assets/Cursor/Cursor_Grabbing.png");
 		CreateImageFromFile(monitorBorder, "./assets/Monitor_Border.png");
 		CreateImageFromFile(titleCard, "./assets/Title_card.png");
+		CreateImageFromFile(memberBlue, "./assets/Struct/Struct_Blue.png");
+		CreateImageFromFile(memberBlueWithShadow, "./assets/Struct/Struct_Blue_With_Shadow.png");
+		CreateImageFromFile(memberGreen, "./assets/Struct/Struct_Green.png");
+		CreateImageFromFile(memberGreenWithShadow, "./assets/Struct/Struct_Green_With_Shadow.png");
+		CreateImageFromFile(memberGrey, "./assets/Struct/Struct_Grey.png");
+		CreateImageFromFile(memberGreyWithShadow, "./assets/Struct/Struct_Grey_With_Shadow.png");
+		CreateImageFromFile(memberPink, "./assets/Struct/Struct_Pink.png");
+		CreateImageFromFile(memberPinkWithShadow, "./assets/Struct/Struct_Pink_With_Shadow.png");
+		CreateImageFromFile(memberRed, "./assets/Struct/Struct_Blue.png");
+		CreateImageFromFile(memberRedWithShadow, "./assets/Struct/Struct_Red_With_Shadow.png");
 
 		WindowAssets windowAssets = {
 			&windowTopCornerImage,
@@ -73,6 +95,19 @@ public:
 			&windowEdgeImage,
 			&windowButtonUp,
 			&windowButtonDown
+		};
+
+		PackingPuzzleAssets packingPuzzleAssets = {
+			&memberBlue,
+			&memberBlueWithShadow,
+			&memberGreen,
+			&memberGreenWithShadow,
+			&memberGrey,
+			&memberGreyWithShadow,
+			&memberPink,
+			&memberPinkWithShadow,
+    		&memberRed,
+			&memberRedWithShadow,
 		};
 
 		// First debug puzzle window
@@ -100,6 +135,19 @@ public:
 				windowAssets,
 				olc::vi2d{ 325, 125 },
 				std::make_unique<DebugPuzzle>()
+			)
+		);
+
+		// Packing puzzle 
+		windowManager.AddWindow(
+			std::make_unique<PuzzleWindow>(
+				*this,
+				olc::vf2d{ 260.0f, 140.0f },
+				220.0f,
+				120.0f,
+				windowAssets,
+				olc::vi2d{ 325, 125 },
+				std::make_unique<PackingPuzzle>(packingPuzzleAssets)
 			)
 		);
 

@@ -5,22 +5,57 @@
 
 #include "puzzle.h"
 
+struct PackingPuzzleAssets {
+	olc::Image* memberBlue = nullptr;
+	olc::Image* memberBlueWithShadow = nullptr;
+	olc::Image* memberGreen = nullptr;
+	olc::Image* memberGreenWithShadow = nullptr;
+	olc::Image* memberGrey = nullptr;
+	olc::Image* memberGreyWithShadow = nullptr;
+	olc::Image* memberPink = nullptr;
+	olc::Image* memberPinkWithShadow = nullptr;
+    olc::Image* memberRed = nullptr;
+	olc::Image* memberRedWithShadow = nullptr;
+};
+
+enum MemberColor {
+    BLUE,
+    GREEN,
+    GREY,
+    PINK,
+    RED
+};
+
 class PackingPuzzle : public Puzzle {
 private:
 	static const olc::vf2d shape;
+    PackingPuzzleAssets assets;
 
 	float fTickerTime;
 	bool complete;
 
+    struct StructMember {
+        olc::vi2d position;
+        olc::vi2d shape;
+        uint8_t numOfBytes;
+        MemberColor color;
+        bool held;
+        olc::vf2d heldOffsetPosition;
+    } charMember, charPtrMember, shortMember, intMember;
+
+    std::vector<StructMember> structMembers;
+
 public:
-	PackingPuzzle();
+	PackingPuzzle(const PackingPuzzleAssets& packingPuzzleAssets);
     void Draw(olc::Draw& draw, float fElapsedTime) override;
-	void Update(float fElapsedTime) override;
+	void Update(float fElapsedTime, const PuzzleInput& input) override;
 	bool isComplete() override;
 
 private:
 	void checkComplete() override;
-	bool onMember(olc::vf2d point, olc::vf2d memberHitbox);
+    bool memberContainsPoint(StructMember& member, olc::vf2d point);
+    void bringMemberToFront(int index);
+
 };
 
 #endif
