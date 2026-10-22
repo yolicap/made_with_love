@@ -57,6 +57,7 @@ protected:
     olc::Image memberRed;
 	olc::Image memberRedStacked;
 	olc::Image memberRedWithShadow;
+	olc::Image memberFrameDotted;
 
 private:
 	WindowManager windowManager;
@@ -97,6 +98,7 @@ public:
 		CreateImageFromFile(memberRed, "./assets/Struct/Struct_Red.png");
 		CreateImageFromFile(memberRedStacked, "./assets/Struct/Struct_Red_Stacked.png");
 		CreateImageFromFile(memberRedWithShadow, "./assets/Struct/Struct_Red_With_Shadow.png");
+		CreateImageFromFile(memberFrameDotted, "./assets/Struct/Struct_Outline_Dotted.png");
 
 		WindowAssets windowAssets = {
 			&windowTopCornerImage,
@@ -123,6 +125,7 @@ public:
     		&memberRed,
 			&memberRedStacked,
 			&memberRedWithShadow,
+			&memberFrameDotted,
 		};
 
 		// First debug puzzle window
@@ -157,11 +160,11 @@ public:
 		windowManager.AddWindow(
 			std::make_unique<PuzzleWindow>(
 				*this,
-				olc::vf2d{ 280.0f, 80.0f },
-				120.0f,
-				120.0f,
+				olc::vf2d{ 100.0f, 180.0f },
+				100.0f,
+				180.0f,
 				windowAssets,
-				olc::vi2d{ 325, 125 },
+				olc::vi2d{ 120, 200 },
 				std::make_unique<PackingPuzzle>(packingPuzzleAssets)
 			)
 		);

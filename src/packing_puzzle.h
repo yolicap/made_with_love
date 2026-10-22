@@ -5,6 +5,9 @@
 
 #include "puzzle.h"
 
+#define PROXIMITY_THRESHOLD_PX_Y 3
+#define PROXIMITY_THRESHOLD_PX_X 10
+
 struct PackingPuzzleAssets {
 	olc::Image* memberBlue = nullptr;
     olc::Image* memberBlueStacked = nullptr;
@@ -21,6 +24,7 @@ struct PackingPuzzleAssets {
     olc::Image* memberRed = nullptr;
     olc::Image* memberRedStacked = nullptr;
 	olc::Image* memberRedWithShadow = nullptr;
+    olc::Image* memberFrameDotted = nullptr;
 };
 
 enum MemberColor {
@@ -34,6 +38,8 @@ enum MemberColor {
 class PackingPuzzle : public Puzzle {
 private:
 	static const olc::vf2d shape;
+    const olc::vf2d framePos = {5, 5};
+
     PackingPuzzleAssets assets;
 
     uint8_t numOfWords;
@@ -48,6 +54,7 @@ private:
         MemberColor color;
         bool held;
         olc::vf2d heldOffsetPosition;
+        bool snapped;
     } charMember, charPtrMember, shortMember, intMember;
 
     std::vector<StructMember> structMembers;
@@ -61,6 +68,7 @@ public:
 private:
 	void checkComplete() override;
     bool memberContainsPoint(StructMember& member, olc::vf2d point);
+    bool memberNearFrame(StructMember& member, olc::vf2d framePos);
     void bringMemberToFront(int index);
 
 };
