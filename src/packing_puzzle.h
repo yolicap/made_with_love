@@ -54,7 +54,6 @@ private:
         MemberColor color;
         bool held;
         olc::vf2d heldOffsetPosition;
-        bool snapped;
     } charMember, charPtrMember, shortMember, intMember;
 
     std::vector<StructMember> structMembers;

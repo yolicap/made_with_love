@@ -62,7 +62,7 @@ void PackingPuzzle::Draw(olc::Draw& draw, float fElapsedTime) {
                     static_cast<float>(framePos.x), 
                     static_cast<float>(
                         framePos.y 
-                        + (((assets.memberFrameDotted->Size().y) * 7) * word)
+                        + (((assets.memberFrameDotted->Size().y-2) * 7) * word)
                         + (( assets.memberFrameDotted->Size().y) * byte) 
                     )
                 }
@@ -79,27 +79,27 @@ void PackingPuzzle::Draw(olc::Draw& draw, float fElapsedTime) {
         olc::Image* memberBarBottom;
         switch (member.color) {
             case BLUE : 
-                memberBarStacked = assets.memberBlueStacked;
+                memberBarStacked = member.held ? assets.memberBlueStacked : assets.memberBlue;
                 memberBarBottom = member.held ? assets.memberBlue : assets.memberBlueWithShadow;
             break;
             case GREEN : 
-                memberBarStacked = assets.memberGreenStacked;
+                memberBarStacked = member.held ? assets.memberGreenStacked : assets.memberGreen;
                 memberBarBottom = member.held ? assets.memberGreen : assets.memberGreenWithShadow;
             break;
             case GREY : 
-                memberBarStacked = assets.memberGreyStacked;
+                memberBarStacked = member.held ? assets.memberGreyStacked : assets.memberGrey;
                 memberBarBottom = member.held ? assets.memberGrey : assets.memberGreyWithShadow;
             break;
             case PINK : 
-                memberBarStacked = assets.memberPinkStacked;
+                memberBarStacked = member.held ? assets.memberPinkStacked : assets.memberPink;
                 memberBarBottom = member.held ? assets.memberPink : assets.memberPinkWithShadow;
             break;
             case RED : 
-                memberBarStacked = assets.memberRedStacked;
+                memberBarStacked = member.held ? assets.memberRedStacked : assets.memberRed;
                 memberBarBottom = member.held ? assets.memberRed : assets.memberRedWithShadow;
         }
 
-        // TODO: If snapped, collapse
+        // TODO: If not being held, collapse
         auto batch = draw.CreateImageBatch(*memberBarStacked);
         for (int i = 0; i < member.numOfBytes-1; i++) {
             draw.Image(
@@ -165,7 +165,7 @@ void PackingPuzzle::Update(float fElapsedTime, const PuzzleInput& input) {
                 structMembers.back().position = currFramePos;
                 break;
             }
-            currFramePos.y += (assets.memberFrameDotted->Size().y-1); 
+            currFramePos.y += (assets.memberFrameDotted->Size().y-2); 
         } 
     }
 
