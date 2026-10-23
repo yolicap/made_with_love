@@ -162,7 +162,7 @@ public:
 				*this,
 				olc::vf2d{ 100.0f, 180.0f },
 				100.0f,
-				180.0f,
+				200.0f,
 				windowAssets,
 				olc::vi2d{ 120, 200 },
 				std::make_unique<PackingPuzzle>(packingPuzzleAssets)

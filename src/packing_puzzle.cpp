@@ -3,7 +3,7 @@
 #include "game.h"
 #include "packing_puzzle.h"
 
-const olc::vf2d PackingPuzzle::shape = {100, 180};
+const olc::vf2d PackingPuzzle::shape = {100, 200};
 
 PackingPuzzle::PackingPuzzle(const PackingPuzzleAssets& packingPuzzleAssets) {
     assets = packingPuzzleAssets;
@@ -12,7 +12,23 @@ PackingPuzzle::PackingPuzzle(const PackingPuzzleAssets& packingPuzzleAssets) {
     complete = false;
     numOfWords = 3;
 
-    charMember.position = {10, 10};
+    // Is vector best for this? Idk prob too heavy.
+    // TODO : think of something w a variable size that can hold multiple coords
+    for (int cellIdx = 0; cellIdx < numOfWords * 8; cellIdx++) {
+        gridCellCoords.push_back({
+            framePos.x,
+            framePos.y 
+            + ((assets.memberFrameDotted->Size().y) * (8*(cellIdx / 8))) 
+            + (assets.memberFrameDotted->Size().y * (cellIdx % 8))
+        });
+    }
+    
+
+    charMember.position = {
+        static_cast<int>(framePos.x), 
+        // static_cast<int>(framePos.y + (*( % 8)) + (( / 8)))
+        10
+    };
     charMember.numOfBytes = 1;
     charMember.color = GREEN;
     charMember.shape = {
@@ -21,7 +37,10 @@ PackingPuzzle::PackingPuzzle(const PackingPuzzleAssets& packingPuzzleAssets) {
     };
     structMembers.push_back(charMember);
 
-    charPtrMember.position = {20, 20};
+    charPtrMember.position = {
+        static_cast<int>(framePos.x), 
+        20
+    };
     charPtrMember.numOfBytes = 8;
     charPtrMember.color = GREY;
     charPtrMember.shape = {
@@ -30,7 +49,10 @@ PackingPuzzle::PackingPuzzle(const PackingPuzzleAssets& packingPuzzleAssets) {
     };
     structMembers.push_back(charPtrMember);
 
-    shortMember.position = {30, 30};
+    shortMember.position = {
+        static_cast<int>(framePos.x), 
+        50
+    };
     shortMember.numOfBytes = 2;
     shortMember.color = PINK;
     shortMember.shape = {
@@ -39,7 +61,10 @@ PackingPuzzle::PackingPuzzle(const PackingPuzzleAssets& packingPuzzleAssets) {
     };
     structMembers.push_back(shortMember);
 
-    intMember.position = {40, 40};
+    intMember.position = {
+        static_cast<int>(framePos.x), 
+        80
+    };
     intMember.numOfBytes = 4;
     intMember.color = RED;
     intMember.shape = {
@@ -51,25 +76,11 @@ PackingPuzzle::PackingPuzzle(const PackingPuzzleAssets& packingPuzzleAssets) {
 
 void PackingPuzzle::Draw(olc::Draw& draw, float fElapsedTime) {
 
-    // Draw struct frame
-    for (int word = 0; word < numOfWords; word++) {
-        auto batch = draw.CreateImageBatch(*assets.memberFrameDotted);
-        for (int byte = 0; byte < 8; byte++) {
-            draw.Image(
-                batch, 
-                *assets.memberFrameDotted, 
-                {
-                    static_cast<float>(framePos.x), 
-                    static_cast<float>(
-                        framePos.y 
-                        + (((assets.memberFrameDotted->Size().y-2) * 7) * word)
-                        + (( assets.memberFrameDotted->Size().y) * byte) 
-                    )
-                }
-            );
-        }
-        draw.Batch(batch);
+    auto batch = draw.CreateImageBatch(*assets.memberFrameDotted);
+    for (olc::vf2d gridCellCoord : gridCellCoords) {
+        draw.Image(batch, *assets.memberFrameDotted, gridCellCoord);
     }
+    draw.Batch(batch);
 
     // Draw struct members
     for (StructMember member: structMembers) {
@@ -158,15 +169,12 @@ void PackingPuzzle::Update(float fElapsedTime, const PuzzleInput& input) {
     if (structMembers.back().held && input.leftClickReleased) {
         structMembers.back().held = false;
         // Check if member should snap to a frame
-        olc::vf2d currFramePos = {framePos.x, framePos.y};
-        for (int frame = 0; frame < (8 * 3); frame++) {
-            // Increment y axis
-            if ( memberNearFrame(structMembers.back(), currFramePos) ){
+        for (olc::vf2d currFramePos : gridCellCoords){
+            if (memberNearFrame(structMembers.back(), currFramePos)) {
                 structMembers.back().position = currFramePos;
                 break;
             }
-            currFramePos.y += (assets.memberFrameDotted->Size().y-2); 
-        } 
+        }
     }
 
     // Update in reverse order.
@@ -184,7 +192,7 @@ void PackingPuzzle::Update(float fElapsedTime, const PuzzleInput& input) {
 
 };
 
-bool PackingPuzzle::isComplete() {
+bool PackingPuzzle::isComplete() { 
     return complete;
 };
 

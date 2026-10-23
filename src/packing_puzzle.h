@@ -57,6 +57,7 @@ private:
     } charMember, charPtrMember, shortMember, intMember;
 
     std::vector<StructMember> structMembers;
+    std::vector<olc::vf2d> gridCellCoords;
 
 public:
 	PackingPuzzle(const PackingPuzzleAssets& packingPuzzleAssets);
