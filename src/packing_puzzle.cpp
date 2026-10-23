@@ -3,7 +3,7 @@
 #include "game.h"
 #include "packing_puzzle.h"
 
-const olc::vf2d PackingPuzzle::shape = {100, 200};
+const olc::vf2d PackingPuzzle::shape = {100, 150};
 
 PackingPuzzle::PackingPuzzle(const PackingPuzzleAssets& packingPuzzleAssets) {
     assets = packingPuzzleAssets;
@@ -18,17 +18,13 @@ PackingPuzzle::PackingPuzzle(const PackingPuzzleAssets& packingPuzzleAssets) {
         gridCellCoords.push_back({
             framePos.x,
             framePos.y 
-            + ((assets.memberFrameDotted->Size().y) * (8*(cellIdx / 8))) 
-            + (assets.memberFrameDotted->Size().y * (cellIdx % 8))
+            + ((assets.memberFrameDotted->Size().y-2) * (8*(cellIdx / 8))) 
+            + ((assets.memberFrameDotted->Size().y-2) * (cellIdx % 8))
         });
     }
     
 
-    charMember.position = {
-        static_cast<int>(framePos.x), 
-        // static_cast<int>(framePos.y + (*( % 8)) + (( / 8)))
-        10
-    };
+    charMember.position = gridCellCoords.at(0);
     charMember.numOfBytes = 1;
     charMember.color = GREEN;
     charMember.shape = {
@@ -36,11 +32,12 @@ PackingPuzzle::PackingPuzzle(const PackingPuzzleAssets& packingPuzzleAssets) {
         assets.memberBlue->Size().y * charMember.numOfBytes
     };
     structMembers.push_back(charMember);
+    memberMap[{
+        charMember.position.x, 
+        charMember.position.y
+    }] = charMember;
 
-    charPtrMember.position = {
-        static_cast<int>(framePos.x), 
-        20
-    };
+    charPtrMember.position = gridCellCoords.at(8);
     charPtrMember.numOfBytes = 8;
     charPtrMember.color = GREY;
     charPtrMember.shape = {
@@ -48,11 +45,12 @@ PackingPuzzle::PackingPuzzle(const PackingPuzzleAssets& packingPuzzleAssets) {
         assets.memberBlue->Size().y * charPtrMember.numOfBytes
     };
     structMembers.push_back(charPtrMember);
+    memberMap[{
+        charPtrMember.position.x, 
+        charPtrMember.position.y
+    }] = charPtrMember;
 
-    shortMember.position = {
-        static_cast<int>(framePos.x), 
-        50
-    };
+    shortMember.position = gridCellCoords.at(16);
     shortMember.numOfBytes = 2;
     shortMember.color = PINK;
     shortMember.shape = {
@@ -60,11 +58,12 @@ PackingPuzzle::PackingPuzzle(const PackingPuzzleAssets& packingPuzzleAssets) {
         assets.memberBlue->Size().y * shortMember.numOfBytes
     };
     structMembers.push_back(shortMember);
+    memberMap[{
+        shortMember.position.x, 
+        shortMember.position.y
+    }] = shortMember;
 
-    intMember.position = {
-        static_cast<int>(framePos.x), 
-        80
-    };
+    intMember.position = gridCellCoords.at(18);
     intMember.numOfBytes = 4;
     intMember.color = RED;
     intMember.shape = {
@@ -72,9 +71,19 @@ PackingPuzzle::PackingPuzzle(const PackingPuzzleAssets& packingPuzzleAssets) {
         assets.memberBlue->Size().y * intMember.numOfBytes // TODO : Adjust for stacked
     };
     structMembers.push_back(intMember);
+    memberMap[{
+        intMember.position.x, 
+        intMember.position.y
+    }] = intMember;
 };
 
 void PackingPuzzle::Draw(olc::Draw& draw, float fElapsedTime) {
+
+    // TODO : can this be in a parent class ?
+    if (complete) {
+        draw.StringProp({40, 45}, "Puzzle Complete!", olc::Colour::VERY_DARK_GREEN, {1.5, 1.5});
+        return;
+    }
 
     auto batch = draw.CreateImageBatch(*assets.memberFrameDotted);
     for (olc::vf2d gridCellCoord : gridCellCoords) {
@@ -110,7 +119,8 @@ void PackingPuzzle::Draw(olc::Draw& draw, float fElapsedTime) {
                 memberBarBottom = member.held ? assets.memberRed : assets.memberRedWithShadow;
         }
 
-        // TODO: If not being held, collapse
+        // If not being held, collapse
+        // TODO: adjust spacing between eachother so it's hugged by frame
         auto batch = draw.CreateImageBatch(*memberBarStacked);
         for (int i = 0; i < member.numOfBytes-1; i++) {
             draw.Image(
@@ -157,11 +167,16 @@ void PackingPuzzle::bringMemberToFront(int index) {
 }
 
 void PackingPuzzle::Update(float fElapsedTime, const PuzzleInput& input) {
+    checkComplete();
 
     // Held member should already be in back. Check if held and update
     if (structMembers.back().held && input.leftClickHeld) {
         // TODO : these namings are kinda confusing. need to fix
         StructMember& activeMember = structMembers.back();
+
+        // Don't let moving member to be found in the map. Set back when released
+        memberMap.erase({activeMember.position.x, activeMember.position.y});
+
         activeMember.position = input.mousePosition - activeMember.heldOffsetPosition;
     }
 
@@ -175,6 +190,7 @@ void PackingPuzzle::Update(float fElapsedTime, const PuzzleInput& input) {
                 break;
             }
         }
+        memberMap[{structMembers.back().position.x, structMembers.back().position.y}] = structMembers.back();
     }
 
     // Update in reverse order.
@@ -196,6 +212,23 @@ bool PackingPuzzle::isComplete() {
     return complete;
 };
 
+// this is O(n^2) or whatever so it could be done more efficiently
+// probably with a hashmap that points to member from coords but 
+// do i really want to update the hashmap everytime the member is moved
+// well i guess only when it is let go... fine ill do it u convinced me
 void PackingPuzzle::checkComplete() {
-    complete = false;
+    int numMembersSeen = 0;
+    int cellIdx = 0;
+    while (cellIdx < gridCellCoords.size()) {
+        // girl idk anymore im tired
+        olc::vf2d gridCoords = gridCellCoords.at(cellIdx);
+        // TODO : im sorry im lazy at this moment. i need to make olc vf2d hashable somehow
+        if (memberMap.contains({gridCoords.x, gridCoords.y})) {
+            numMembersSeen ++;
+            cellIdx += memberMap[{gridCoords.x, gridCoords.y}].numOfBytes;
+        } else {
+            complete = (numMembersSeen == structMembers.size());
+            break;
+        }
+    }
 };
